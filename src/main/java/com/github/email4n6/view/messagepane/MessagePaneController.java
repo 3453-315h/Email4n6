@@ -40,8 +40,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -117,10 +116,18 @@ public class MessagePaneController {
             if (newValue == Worker.State.SUCCEEDED) {
                 try {
                     // Page is done loading, add support for highlighting.
-                    Path markScript = Paths.get(this.getClass().getResource("/js/mark.min.js").toURI());
+                    InputStream inputStream = getClass().getResourceAsStream("/js/mark.min.js");
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-                    messagePane.getBodyView().getEngine().executeScript(new String(Files.readAllBytes(markScript)));
-                } catch (URISyntaxException | IOException ex) {
+                    String line;
+                    StringBuilder markScript = new StringBuilder();
+
+                    while ((line = reader.readLine()) != null) {
+                        markScript.append(line);
+                    }
+
+                    messagePane.getBodyView().getEngine().executeScript(markScript.toString());
+                } catch (IOException ex) {
                     log.error(ex.getMessage(), ex);
                 }
             }
