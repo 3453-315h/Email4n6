@@ -112,8 +112,8 @@ public class HomeController {
                                 log.debug("Calculating the size of the source(s)...");
 
                                 sourceSize = homeModel.getSourceSize(
-                                        parserFactory.getAllSupportedFileExtensions(),
                                         selectedCase.getSources(),
+                                        parserFactory.getAllSupportedFileExtensions(),
                                         selectedCase.isSubFolders()
                                 );
 
