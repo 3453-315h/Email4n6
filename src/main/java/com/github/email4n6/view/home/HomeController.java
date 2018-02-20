@@ -39,6 +39,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
@@ -122,7 +123,14 @@ public class HomeController {
                             }
 
                             fileParser.setOnParsingFinished(onParsingFinished); // Send through to whoever is listening.
-                            fileParser.parseFiles(selectedCase.getSources());
+
+                            File firstSource = new File(selectedCase.getSources().iterator().next());
+
+                            if (firstSource.isDirectory()) {
+                                fileParser.parseFolder(firstSource.getPath(), selectedCase.isSubFolders());
+                            } else {
+                                fileParser.parseFiles(selectedCase.getSources());
+                            }
                             return sourceSize;
                         }
 

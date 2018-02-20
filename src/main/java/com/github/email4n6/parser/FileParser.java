@@ -32,7 +32,11 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -49,6 +53,7 @@ public class FileParser {
     private ParserFactory parserFactory;
     private Case currentCase;
     private LoadingStage loadingStage;
+    private Indexer indexer;
 
     private @Setter FinishedListener onParsingFinished;
 
@@ -56,6 +61,7 @@ public class FileParser {
         this.parserFactory = parserFactory;
         this.currentCase = currentCase;
         this.loadingStage = loadingStage;
+        this.indexer = new Indexer(currentCase.getName());
     }
 
     /**
@@ -64,8 +70,6 @@ public class FileParser {
      * @param sources The paths of the files to parse.
      */
     public void parseFiles(Set<String> sources) {
-        Indexer indexer = new Indexer(currentCase.getName());
-
         sources.forEach(source -> {
             File file = new File(source);
 
@@ -114,6 +118,49 @@ public class FileParser {
         onParsingFinished.finished(currentCase, indexer, loadingStage);
     }
 
+    /**
+     * Walks the folder and calls the appropriate parsers on the files.
+     *
+     * @param folderPath The path to the folder to parse.
+     */
+    public void parseFolder(String folderPath, boolean extractSubFolders) {
+        Set<String> sources = new HashSet<>();
+        Set<String> supportedFileExtensions = parserFactory.getAllSupportedFileExtensions();
+
+        try {
+            Files.walkFileTree(Paths.get(folderPath), new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+                    if (supportedFileExtensions.contains(getFileExtension(path.toFile()))) {
+                        sources.add(path.toString());
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
+                    if (!extractSubFolders && !path.toString().equals(folderPath)) {
+                        return FileVisitResult.SKIP_SUBTREE;
+                    } else {
+                        return FileVisitResult.CONTINUE;
+                    }
+                }
+
+                @Override
+                public FileVisitResult visitFileFailed(Path file, IOException ex) {
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (IOException ex) {
+            log.error(ex.getMessage(), ex);
+        }
+
+        parseFiles(sources);
+    }
+
+    /**
+     * @return The file's extension.
+     */
     private String getFileExtension(File file) {
         String extension = "";
         int i = file.getName().lastIndexOf('.');
