@@ -67,7 +67,7 @@ public class MessagePaneController {
         messagePane.setOnOpenAttachment(new OpenAttachmentListener());
         messagePane.getBodyView().getEngine().getLoadWorker().stateProperty().addListener(new BodyEngineListener());
         messagePane.getBodyView().setOnMouseClicked(new BodyClickListener());
-        messagePane.getTable().setContextMenu(new DefaultContextMenu(messagePane));
+        messagePane.getTable().setContextMenu(new DefaultContextMenu(messagePane, messageFactory));
     }
 
     /**

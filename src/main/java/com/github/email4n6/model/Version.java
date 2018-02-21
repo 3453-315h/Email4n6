@@ -28,5 +28,5 @@ public final class Version {
     /**
      * See https://semver.org/
      */
-    public static final String VERSION_NUMBER = "1.1.2";
+    public static final String VERSION_NUMBER = "1.2.2";
 }

@@ -18,16 +18,23 @@
 
 package com.github.email4n6.view.messagepane;
 
+import com.github.email4n6.message.AttachmentRow;
 import com.github.email4n6.message.MessageRow;
+import com.github.email4n6.message.MessageValue;
+import com.github.email4n6.message.factory.MessageFactory;
 import com.github.email4n6.model.tagsdao.TagsDAO;
 import com.github.email4n6.view.tabs.bookmarks.BookmarksModel;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
+import javafx.stage.DirectoryChooser;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.stream.Collectors;
 
 /**
@@ -39,9 +46,11 @@ import java.util.stream.Collectors;
 public class DefaultContextMenu extends ContextMenu {
 
     private MessagePane messagePane;
+    private MessageFactory messageFactory;
 
-    public DefaultContextMenu(MessagePane messagePane) {
+    public DefaultContextMenu(MessagePane messagePane, MessageFactory messageFactory) {
         this.messagePane = messagePane;
+        this.messageFactory = messageFactory;
 
         initComponents();
     }
@@ -59,9 +68,13 @@ public class DefaultContextMenu extends ContextMenu {
         MenuItem tagAddSelected = new MenuItem("Add Selected");
         MenuItem tagRemoveSelected = new MenuItem("Remove Selected");
 
+        // Export
+        MenuItem exportAttachments = new MenuItem("Attachments");
+
         // Add
         menuBookmark.getItems().addAll(bookmarksAddSelected, bookmarksRemoveSelected);
         menuTag.getItems().addAll(tagAddSelected, tagRemoveSelected);
+        menuExport.getItems().addAll(exportAttachments);
 
         getItems().addAll(menuBookmark, menuTag, menuExport);
 
@@ -115,6 +128,49 @@ public class DefaultContextMenu extends ContextMenu {
             messagePane.getTable().getSelectionModel().getSelectedItems().forEach(row -> {
                 row.getTag().setValue("");
             });
+        });
+        exportAttachments.setOnAction((event) -> {
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+
+            File selectedDirectory = directoryChooser.showDialog(messagePane.getTable().getScene().getWindow());
+
+            if (selectedDirectory != null) {
+                boolean wasAttachments = false;
+
+                for (MessageRow row : messagePane.getTable().getSelectionModel().getSelectedItems()) {
+                    MessageValue messageValue = messageFactory.getMessageValue(row.getId());
+
+                    for (AttachmentRow attachment : messageValue.getAttachments()) {
+                        try {
+                            wasAttachments = true;
+
+                            Files.copy(
+                                    attachment.getInputStream(),
+                                    Paths.get(selectedDirectory.getPath() + File.separator + attachment.getAttachmentName()),
+                                    StandardCopyOption.REPLACE_EXISTING
+                            );
+
+                            attachment.getInputStream().reset(); // Important!
+                        } catch (IOException ex) {
+                            log.error(ex.getMessage(), ex);
+                        }
+                    }
+                }
+
+                if (wasAttachments) {
+                    new Alert(
+                            Alert.AlertType.INFORMATION,
+                            "Attachments exported successfully.",
+                            ButtonType.CLOSE
+                    ).showAndWait();
+                } else {
+                    new Alert(
+                            Alert.AlertType.WARNING,
+                            "Failed to find attachments to export.",
+                            ButtonType.CLOSE
+                    ).showAndWait();
+                }
+            }
         });
     }
 }
