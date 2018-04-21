@@ -7,7 +7,7 @@
   <br>
 </h1>
 
-<h4 align="center">A simple cross-platform forensic application for processing email files.</h4>
+<h4 align="center">A simple cross-platform forensic program for processing email files.</h4>
 
 <p align="center">
   <a href="https://github.com/Marten4n6/Email4n6/blob/master/LICENSE.txt">
@@ -30,18 +30,21 @@
 - Quickly create reports
 - View the body, headers and attachments of messages
 - Portable
-  * Email4n6 lives in a single folder which can easily be moved.
+  * Email4n6 lives in a single directory which can easily be moved.
 - Cross platform
   * Linux, macOS and Windows ready.
 
 ##
+
 Currently only PST and OST (untested) files are supported, once these
 formats are well tested support for files such as EML should follow.
 
 ## How To Use
 
-**Email4n6 requires [Java 8](https://java.com/en/download/) to be installed.** <br/>
+Email4n6 requires [Java 8](https://java.com/en/download/) to be installed. <br/>
 If you're running on Linux and are using OpenJDK, please make sure to also install OpenJFX.
+
+#### Download
 
 You can [download](https://github.com/Marten4n6/Email4n6/releases) the latest version of Email4n6 for Linux, macOS and Windows.
 
@@ -62,12 +65,13 @@ $ mvn clean compile assembly:single
 # Lastly, run Email4n6
 $ java -jar target/Email4n6-*.jar
 ```
+
+## Screenshots
 ![](https://i.imgur.com/EiAesJY.png)
 
 ## Motivation
 This project was created because I was unable to find any good open-source alternatives to commercial software, such as
-[Forensic Explorer](http://www.forensicexplorer.com/) and [Intella](https://www.vound-software.com/) for working with email files. <br/>
-Although these products offer a lot more than just working with email files, this project can hopefully be used to replace the email functionality.
+[Forensic Explorer](http://www.forensicexplorer.com/) and [Intella](https://www.vound-software.com/) for working with email files. Although these products offer a lot more than just working with email files, this project can hopefully be used to replace the email functionality.
 
 ## Versioning
 
