@@ -11,13 +11,13 @@
 
 <p align="center">
   <a href="https://github.com/Marten4n6/Email4n6/blob/master/LICENSE.txt">
-      <img src="https://img.shields.io/badge/license-GPLv3-blue.svg">
+      <img src="https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat-square">
   </a>
   <a href="https://github.com/Marten4n6/Email4n6/issues">
-    <img src="https://img.shields.io/github/issues/Marten4n6/Email4n6.svg">
+    <img src="https://img.shields.io/github/issues/Marten4n6/Email4n6.svg?style=flat-square">
   </a>
-  <a href="https://github.com/Marten4n6/Email4n6">
-      <img src="https://img.shields.io/badge/contributions-welcome-orange.svg">
+  <a href="https://github.com/Marten4n6/Email4n6/pulls">
+      <img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat-square">
   </a>
 </p>
 
@@ -37,18 +37,18 @@
 ##
 
 Currently only PST and OST (untested) files are supported, once these
-formats are well tested support for files such as EML should follow.
+formats are well tested, support for files such as EML should follow.
 
 ## How To Use
 
 Email4n6 requires [Java 8](https://java.com/en/download/) to be installed. <br/>
 If you're running on Linux and are using OpenJDK, please make sure to also install OpenJFX.
 
-#### Download
+### Download
 
 You can [download](https://github.com/Marten4n6/Email4n6/releases) the latest version of Email4n6 for Linux, macOS and Windows.
 
-#### From Source
+### From Source
 
 To compile this application from source, you'll need [Git](https://git-scm.com/) and [Maven](https://maven.apache.org/) installed on your computer.
 
