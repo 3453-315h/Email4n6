@@ -107,7 +107,7 @@ class PSTIndexer {
                     rtfParser.read(new ByteArrayInputStream(message.getRTFBody().getBytes()), rtfDocument, 0);
 
                     body = rtfDocument.getText(0, rtfDocument.getLength());
-                } catch (BadLocationException ex) {
+                } catch (BadLocationException | NumberFormatException ex) {
                     log.error("Failed to parse RTF: {}", ex.getMessage());
                 }
             } else if (!message.getBodyHTML().isEmpty()) {
@@ -191,8 +191,6 @@ class PSTIndexer {
 
         // Index all the things...
         addTextField(document, "Subject", contact.getSubject(), false);
-
-        log.debug("Subject: {}", contact.getSubject());
 
         try {
             configuration.getIndexer().getIndexWriter().addDocument(document);

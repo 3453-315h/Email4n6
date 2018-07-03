@@ -24,7 +24,7 @@
 
     <groupId>com.github.email4n6</groupId>
     <artifactId>Email4n6</artifactId>
-    <version>1.0.0</version>
+    <version>1.2.3</version>
 
     <build>
         <plugins>
