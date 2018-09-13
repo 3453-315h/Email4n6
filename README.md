@@ -1,23 +1,29 @@
 
 <h1 align="center">
   <br>
-  <a href="https://github.com/Marten4n6/Email4n6"><img src="https://i.imgur.com/DPN9gmO.png" alt="Email4n6" width="320"></a>
+  <a href="https://github.com/Marten4n6/Email4n6"><img src="https://i.imgur.com/DPN9gmO.png" alt="Logo" width="320"></a>
   <br>
   Email4n6
   <br>
 </h1>
 
-<h4 align="center">A simple cross-platform forensic program for processing email files.</h4>
+<h4 align="center">A simple cross-platform forensic application for processing email files.</h4>
 
 <p align="center">
   <a href="https://github.com/Marten4n6/Email4n6/blob/master/LICENSE.txt">
-      <img src="https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat-square">
+      <img src="https://img.shields.io/badge/license-GPLv3-blue.svg?style=flat-square" alt="License">
+  </a>
+  <a href="https://java.com/download/">
+      <img src="https://img.shields.io/badge/java-8-blue.svg?style=flat-square" alt="Java">
   </a>
   <a href="https://github.com/Marten4n6/Email4n6/issues">
-    <img src="https://img.shields.io/github/issues/Marten4n6/Email4n6.svg?style=flat-square">
+    <img src="https://img.shields.io/github/issues/Marten4n6/Email4n6.svg?style=flat-square" alt="Issues">
+  </a>
+  <a href="https://travis-ci.org/Marten4n6/Email4n6">
+      <img src="https://img.shields.io/travis/Marten4n6/Email4n6/master.svg?style=flat-square" alt="Build Status">
   </a>
   <a href="https://github.com/Marten4n6/Email4n6/pulls">
-      <img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat-square">
+      <img src="https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat-square" alt="Contributing">
   </a>
 </p>
 
@@ -36,21 +42,16 @@
 
 ##
 
-Currently only PST and OST (untested) files are supported, once these
-formats are well tested, support for files such as EML should follow.
+Currently only PST and OST (untested) files are supported.
 
 ## How To Use
 
 Email4n6 requires [Java 8](https://java.com/en/download/) to be installed. <br/>
-If you're running on Linux and are using OpenJDK, please make sure to also install OpenJFX.
-
-### Download
-
-You can [download](https://github.com/Marten4n6/Email4n6/releases) the latest version of Email4n6 for Linux, macOS and Windows.
+[Click here to **download**](https://github.com/Marten4n6/Email4n6/releases) the latest stable version of Email4n6.
 
 ### From Source
 
-To compile this application from source, you'll need [Git](https://git-scm.com/) and [Maven](https://maven.apache.org/) installed on your computer.
+To compile this application from source, you'll need [Git](https://git-scm.com/) and [Maven](https://maven.apache.org/) installed.
 
 ```bash
 # Clone or download this repository
@@ -71,7 +72,7 @@ $ java -jar target/Email4n6-*.jar
 
 ## Motivation
 This project was created because I was unable to find any good open-source alternatives to commercial software, such as
-[Forensic Explorer](http://www.forensicexplorer.com/) and [Intella](https://www.vound-software.com/) for working with email files. Although these products offer a lot more than just working with email files, this project can hopefully be used to replace the email functionality.
+[Forensic Explorer](http://www.forensicexplorer.com/), [EnCase](https://www.guidancesoftware.com/encase-forensic) or [Intella](https://www.vound-software.com/) for working with email files. Although these products offer a lot more than just working with email files, this project can hopefully be used to replace the email functionality.
 
 ## Versioning
 
