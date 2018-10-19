@@ -1,7 +1,6 @@
-
 <h1 align="center">
   <br>
-  <a href="https://github.com/Marten4n6/Email4n6"><img src="https://i.imgur.com/DPN9gmO.png" alt="Logo" width="320"></a>
+  <a href="https://github.com/Marten4n6/Email4n6"><img src="https://i.imgur.com/DPN9gmO.png" alt="Logo" width="300"></a>
   <br>
   Email4n6
   <br>
@@ -68,7 +67,7 @@ $ java -jar target/Email4n6-*.jar
 ```
 
 ## Screenshots
-![](https://i.imgur.com/EiAesJY.png)
+![1](https://i.imgur.com/FE4YBO8.png)
 
 ## Motivation
 This project was created because I was unable to find any good open-source alternatives to commercial software, such as
