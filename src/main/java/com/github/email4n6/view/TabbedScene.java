@@ -15,32 +15,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.email4n6.view;
 
-import com.github.email4n6.model.H2Database;
-import com.github.email4n6.model.casedao.Case;
-import com.github.email4n6.message.factory.DefaultMessageFactory;
-import com.github.email4n6.message.factory.MessageFactory;
+import com.github.email4n6.model.Case;
 import com.github.email4n6.model.Indexer;
-import com.github.email4n6.model.tagsdao.DBTagsDAO;
-import com.github.email4n6.model.tagsdao.TagsDAO;
-import com.github.email4n6.parser.view.LoadingStage;
-import com.github.email4n6.view.home.HomeController;
-import com.github.email4n6.view.home.HomeModel;
-import com.github.email4n6.view.home.HomeTab;
-import com.github.email4n6.view.tabs.spi.TabFactory;
+import com.github.email4n6.model.message.factory.DefaultMessageFactory;
+import com.github.email4n6.view.tabs.bookmarks.BookmarksController;
 import com.github.email4n6.view.tabs.bookmarks.BookmarksModel;
-import com.github.email4n6.view.tabs.tree.TreeObject;
+import com.github.email4n6.view.tabs.bookmarks.BookmarksTab;
+import com.github.email4n6.view.tabs.bookmarks.TagModel;
+import com.github.email4n6.view.tabs.home.loading.LoadingStage;
+import com.github.email4n6.view.tabs.home.HomeController;
+import com.github.email4n6.view.tabs.home.HomeModel;
+import com.github.email4n6.view.tabs.home.HomeTab;
+import com.github.email4n6.view.tabs.report.ReportController;
+import com.github.email4n6.view.tabs.report.ReportModel;
+import com.github.email4n6.view.tabs.report.ReportTab;
+import com.github.email4n6.view.tabs.search.SearchController;
+import com.github.email4n6.view.tabs.search.SearchModel;
+import com.github.email4n6.view.tabs.search.SearchTab;
+import com.github.email4n6.view.tabs.tree.TreeController;
+import com.github.email4n6.view.tabs.tree.TreeModel;
+import com.github.email4n6.view.tabs.tree.TreeTab;
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.TabPane;
-import javafx.scene.control.TreeItem;
 import javafx.scene.layout.BorderPane;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.List;
 
 /**
  * This is the main scene which at first only shows the home tab.
@@ -59,43 +61,57 @@ public class TabbedScene {
 
         // Add the home tabs, other tabs will be added once a case is opened.
         HomeTab homeTab = new HomeTab();
-        HomeController homeController = new HomeController(homeTab, new HomeModel());
+        HomeModel homeModel = new HomeModel();
 
-        homeController.setOnParsingFinished((Case currentCase, Indexer indexer, LoadingStage loadingStage) -> {
+        new HomeController(homeTab, homeModel);
+
+        homeModel.setOnFinishedParsing((Case currentCase, Indexer indexer, LoadingStage loadingStage) -> {
             // Parsing finished, add all other tabs.
             loadingStage.setStatus("Closing the indexer...");
-            log.debug("Closing the indexer...");
+            log.info("Closing the indexer...");
 
-            indexer.commitAndClose();
-            log.debug("Indexer closed.");
+            indexer.close();
+            log.info("Indexer closed.");
 
-            log.debug("Shutting down the loading stage...");
+            log.info("Shutting down the loading stage...");
             loadingStage.shutdown();
             log.info("Parsing finished.");
 
-            H2Database database = new H2Database(currentCase.getName());
-            BookmarksModel bookmarksModel = new BookmarksModel(database);
-            TagsDAO tagsDAO = new DBTagsDAO(database);
+            // Models
+            BookmarksModel bookmarksModel = new BookmarksModel(homeModel.getDatabase());
+            TagModel tagModel = new TagModel(homeModel.getDatabase());
+            SearchModel searchModel = new SearchModel(homeModel.getCurrentCase().getName());
 
-            MessageFactory messageFactory = new DefaultMessageFactory(currentCase, bookmarksModel, tagsDAO);
+            DefaultMessageFactory messageFactory = new DefaultMessageFactory(homeModel.getCurrentCase(), bookmarksModel, tagModel, searchModel);
 
-            new TabFactory(bookmarksModel, tagsDAO, loadingStage.getCreatedTreeItems()).getTabs().forEach(globalTab -> {
-                Platform.runLater(() -> {
-                    // Each tab should be able to access the MessageFactory
-                    // since it is required to create a MessagePaneController.
-                    tabPane.getTabs().add(globalTab.getTab(currentCase, messageFactory));
-                });
+            Platform.runLater(() -> {
+                // Initialize tabs...
+                TreeTab treeTab = new TreeTab();
+                SearchTab searchTab = new SearchTab();
+                BookmarksTab bookmarksTab = new BookmarksTab();
+                ReportTab reportTab = new ReportTab();
+
+                // Controllers
+                new TreeController(treeTab, new TreeModel(messageFactory, loadingStage.getCreatedTreeItems()));
+                new SearchController(searchTab, searchModel, messageFactory, homeModel.getCurrentCase());
+                new BookmarksController(bookmarksTab, bookmarksModel, messageFactory);
+                new ReportController(reportTab, new ReportModel(bookmarksModel, tagModel, messageFactory, homeModel.getCurrentCase()));
+
+                tabPane.getTabs().addAll(
+                        treeTab.getTab(), searchTab.getTab(),
+                        bookmarksTab.getTab(), reportTab.getTab()
+                );
+                tabPane.getSelectionModel().selectNext();
             });
-
-            Platform.runLater(() -> tabPane.getSelectionModel().selectNext());
         });
-        homeController.setOnActiveCaseRemoved((event) -> {
+        homeModel.setOnActiveCaseClosed((event) -> {
             Platform.runLater(() -> {
                 tabPane.getTabs().removeIf(tab -> !tab.getText().equals("Home"));
             });
         });
 
         tabPane.getTabs().add(homeTab.getTab());
+
         sceneLayout.setCenter(tabPane);
     }
 }

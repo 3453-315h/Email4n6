@@ -15,13 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.email4n6.model.report;
 
-import com.github.email4n6.message.factory.MessageFactory;
-import com.github.email4n6.model.casedao.Case;
-import com.github.email4n6.model.tagsdao.TagsDAO;
+import com.github.email4n6.model.Case;
+import com.github.email4n6.model.message.factory.MessageFactory;
 import com.github.email4n6.view.tabs.bookmarks.BookmarksModel;
+import com.github.email4n6.view.tabs.bookmarks.TagModel;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -39,6 +38,6 @@ public class ReportConfiguration {
     private @Getter String reportName;
     private @Getter File outputFolder;
     private @Getter BookmarksModel bookmarksModel;
-    private @Getter TagsDAO tagsDAO;
+    private @Getter TagModel tagsDAO;
     private @Getter MessageFactory messageFactory;
 }

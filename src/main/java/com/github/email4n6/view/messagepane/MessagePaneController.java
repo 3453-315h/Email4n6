@@ -15,16 +15,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.email4n6.view.messagepane;
 
-import com.github.email4n6.message.factory.MessageFactory;
-import com.github.email4n6.model.tagsdao.TagsDAO;
-import com.github.email4n6.utils.OSUtils;
-import com.github.email4n6.message.AttachmentRow;
-import com.github.email4n6.message.MessageRow;
-import com.github.email4n6.message.MessageValue;
-import com.github.email4n6.view.tabs.bookmarks.BookmarksModel;
+import com.github.email4n6.model.Version;
+import com.github.email4n6.model.message.factory.MessageFactory;
+import com.github.email4n6.utils.PathUtils;
+import com.github.email4n6.model.message.AttachmentRow;
+import com.github.email4n6.model.message.MessageRow;
+import com.github.email4n6.model.message.MessageValue;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -36,15 +34,13 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.*;
+import javafx.scene.web.WebView;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 
@@ -63,10 +59,13 @@ public class MessagePaneController {
         this.messagePane = messagePane;
         this.messageFactory = messageFactory;
 
+        // Catch events fired by the message pane.
         messagePane.setOnMessageSelectionChange(new MessageSelectionChangeListener());
         messagePane.setOnOpenAttachment(new OpenAttachmentListener());
-        messagePane.getBodyView().getEngine().getLoadWorker().stateProperty().addListener(new BodyEngineListener());
-        messagePane.getBodyView().setOnMouseClicked(new BodyClickListener());
+        messagePane.getBodyView().getEngine().getLoadWorker().stateProperty().addListener(new BodyEngineListener(messagePane.getBodyView()));
+        messagePane.getBodyView().setOnMouseClicked(new BodyClickListener(messagePane.getBodyView()));
+        messagePane.getHeadersView().getEngine().getLoadWorker().stateProperty().addListener(new BodyEngineListener(messagePane.getHeadersView()));
+        messagePane.getHeadersView().setOnMouseClicked(new BodyClickListener(messagePane.getHeadersView()));
         messagePane.getTable().setContextMenu(new DefaultContextMenu(messagePane, messageFactory));
     }
 
@@ -102,12 +101,18 @@ public class MessagePaneController {
      */
     class BodyEngineListener implements ChangeListener<Worker.State> {
 
+        private WebView webView;
+
+        BodyEngineListener(WebView webView) {
+            this.webView = webView;
+        }
+
         @Override
         public void changed(ObservableValue<? extends Worker.State> observable, Worker.State oldValue, Worker.State newValue) {
-            if (!messagePane.getBodyView().getEngine().getLocation().isEmpty()) {
+            if (!webView.getEngine().getLocation().isEmpty()) {
                 // Cancel clicking on links which would most likely be a bad idea.
                 Platform.runLater(() -> {
-                    log.warn("Canceling request to load: {}", messagePane.getBodyView().getEngine().getLocation());
+                    log.warn("Canceling request to load: {}", webView.getEngine().getLocation());
 
                     messagePane.getBodyView().getEngine().getLoadWorker().cancel();
                 });
@@ -116,7 +121,7 @@ public class MessagePaneController {
             if (newValue == Worker.State.SUCCEEDED) {
                 try {
                     // Page is done loading, add support for highlighting.
-                    InputStream inputStream = getClass().getResourceAsStream("/js/mark.min.js");
+                    InputStream inputStream = this.getClass().getResourceAsStream("/js/mark.min.js");
                     BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
                     String line;
@@ -126,7 +131,7 @@ public class MessagePaneController {
                         markScript.append(line);
                     }
 
-                    messagePane.getBodyView().getEngine().executeScript(markScript.toString());
+                    webView.getEngine().executeScript(markScript.toString());
                 } catch (IOException ex) {
                     log.error(ex.getMessage(), ex);
                 }
@@ -139,13 +144,19 @@ public class MessagePaneController {
      */
     class BodyClickListener implements EventHandler<MouseEvent> {
 
-        private ContextMenu contextMenu = getMenu();
+        private WebView webView;
+        private ContextMenu contextMenu;
+
+        BodyClickListener(WebView webView) {
+            this.contextMenu = getMenu();
+            this.webView = webView;
+        }
 
         @Override
         public void handle(MouseEvent event) {
             // Custom context menu
             if (event.getButton() == MouseButton.SECONDARY) {
-                contextMenu.show(messagePane.getBodyView(), event.getScreenX(), event.getScreenY());
+                contextMenu.show(webView, event.getScreenX(), event.getScreenY());
             } else {
                 contextMenu.hide();
             }
@@ -168,11 +179,11 @@ public class MessagePaneController {
             searchItem.setOnAction((event) -> {
                 // Search menu item
                 TextInputDialog dialog = new TextInputDialog();
-                dialog.setTitle("Email4n6");
+                dialog.setTitle("Email4n6 v" + Version.VERSION_NUMBER);
                 dialog.setHeaderText("Find");
 
                 dialog.showAndWait().ifPresent(result -> {
-                    messagePane.getBodyView().getEngine().executeScript(
+                    webView.getEngine().executeScript(
                             "var instance = new Mark(document.querySelector(\"body\"));" +
                                     "instance.unmark();" +
                                     "instance.mark(\"" + result + "\", {" +
@@ -201,7 +212,7 @@ public class MessagePaneController {
                 AttachmentRow selectedRow = messagePane.getAttachmentsTable().getSelectionModel().getSelectedItem();
 
                 if (selectedRow != null) {
-                    File outputFile = new File(OSUtils.getTempPath() + File.separator + selectedRow.getAttachmentName());
+                    File outputFile = new File(PathUtils.getTempPath() + File.separator + selectedRow.getAttachmentName());
 
                     try {
                         outputFile.deleteOnExit();

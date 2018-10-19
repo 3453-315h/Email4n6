@@ -15,15 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.email4n6.view.tabs.search;
 
-import com.github.email4n6.message.factory.MessageFactory;
 import com.github.email4n6.view.messagepane.MessagePane;
-import com.github.email4n6.model.casedao.Case;
-import com.github.email4n6.view.messagepane.MessagePaneController;
-import com.github.email4n6.view.tabs.bookmarks.BookmarksModel;
-import com.github.email4n6.view.tabs.spi.GlobalTab;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -43,33 +37,29 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Tab implementation which provides a simple
- * way to search through messages.
+ * Tab implementation which provides a simple way to search through messages.
  *
  * @author Marten4n6
  */
 @Slf4j
-public class SearchTab implements GlobalTab {
+public class SearchTab {
 
-    private @Getter Case currentCase;
-    private @Getter MessageFactory messageFactory;
-
-    private TextField searchField;
+    private @Getter Tab tab;
     private @Getter MessagePane messagePane;
 
+    private TextField searchField;
+
+    // Listeners
     private @Setter EventHandler<ActionEvent> onSearch;
     private @Setter EventHandler<MouseEvent> onSettingsClicked;
 
-    @Override
-    public Tab getTab(Case currentCase, MessageFactory messageFactory) {
-        this.currentCase = currentCase;
-        this.messageFactory = messageFactory;
-
-        Tab tab = new Tab();
+    /**
+     * Initializes the search tab.
+     */
+    public SearchTab() {
+        tab = new Tab();
         BorderPane borderPane = new BorderPane();
-
-        messagePane = new MessagePane(currentCase);
-        new MessagePaneController(messagePane, messageFactory);
+        messagePane = new MessagePane();
 
         // Border Pane
         borderPane.setPadding(new Insets(5, 0, 0, 0));
@@ -80,11 +70,10 @@ public class SearchTab implements GlobalTab {
         tab.setContent(borderPane);
         tab.setGraphic(new ImageView(new Image(this.getClass().getResourceAsStream("/images/search.png"))));
 
-        // Search Field
+        // Search field
         HBox topLayout = new HBox();
 
-        topLayout.setSpacing(5);
-        topLayout.setPadding(new Insets(0, 5, 0, 0));
+        topLayout.setSpacing(3);
         topLayout.setMaxWidth(Double.MAX_VALUE);
 
         searchField = new TextField();
@@ -96,6 +85,7 @@ public class SearchTab implements GlobalTab {
 
         HBox.setHgrow(searchField, Priority.ALWAYS);
         topLayout.getChildren().addAll(searchField, settingsLabel);
+        BorderPane.setMargin(topLayout, new Insets(5, 0, 5, 5));
 
         // Listeners
         searchField.setOnAction((event) -> onSearch.handle(event));
@@ -104,20 +94,19 @@ public class SearchTab implements GlobalTab {
         // Add
         borderPane.setTop(topLayout);
         borderPane.setCenter(messagePane.getPane());
-        return tab;
     }
 
     /**
      * @return The entered search query.
      */
-    public String getSearchQuery() {
+    String getSearchQuery() {
         return searchField.getText();
     }
 
     /**
      * Reloads the search query.
      */
-    public void reload() {
+    void reload() {
         searchField.fireEvent(new ActionEvent());
     }
 
@@ -127,7 +116,7 @@ public class SearchTab implements GlobalTab {
                 searchField.setCursor(Cursor.WAIT);
                 messagePane.getTable().setCursor(Cursor.WAIT);
             } else {
-                searchField.setCursor(Cursor.DEFAULT);
+                searchField.setCursor(Cursor.TEXT);
                 messagePane.getTable().setCursor(Cursor.DEFAULT);
             }
         });

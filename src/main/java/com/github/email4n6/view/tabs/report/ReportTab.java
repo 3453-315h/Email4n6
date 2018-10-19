@@ -15,14 +15,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.email4n6.view.tabs.report;
 
-import com.github.email4n6.model.casedao.Case;
-import com.github.email4n6.message.factory.MessageFactory;
 import com.github.email4n6.model.report.Report;
-import com.github.email4n6.view.tabs.spi.GlobalTab;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -31,9 +26,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
+import javafx.scene.layout.*;
 import javafx.stage.DirectoryChooser;
 import javafx.util.StringConverter;
 import lombok.Getter;
@@ -49,24 +42,22 @@ import java.util.List;
  * @author Marten4n6
  */
 @Slf4j
-public class ReportTab implements GlobalTab {
+public class ReportTab {
 
-    private Tab tab;
+    private @Getter Tab tab;
+    private @Getter ComboBox<Report> comboBoxReportTypes;
+
     private TextField fieldReportName;
     private TextField fieldOutputFolder;
 
-    private @Getter Case currentCase;
-    private @Getter MessageFactory messageFactory;
-    private @Getter ComboBox<Report> comboBoxReportTypes;
-
+    // Listeners
     private @Setter EventHandler<Event> onTabSelection;
     private @Setter EventHandler<Event> onCreateReport;
 
-    @Override
-    public Tab getTab(Case currentCase, MessageFactory messageFactory) {
-        this.currentCase = currentCase;
-        this.messageFactory = messageFactory;
-
+    /**
+     * Initializes the report tab.
+     */
+    public ReportTab() {
         tab = new Tab();
 
         // Tab
@@ -80,20 +71,18 @@ public class ReportTab implements GlobalTab {
                 onTabSelection.handle(event);
             }
         });
-
-        return tab;
     }
 
     /**
      * Sets the bookmarks layout.
      */
-    public void setBookmarksLayout(List<Report> reportTypes) {
+    void setBookmarksLayout(List<Report> reportTypes) {
         GridPane layout = new GridPane();
 
         // Layout
-        layout.setPadding(new Insets(5, 5, 5, 5));
-        layout.setHgap(5);
+        layout.setPadding(new Insets(10, 10, 5, 10));
         layout.setVgap(5);
+        layout.setHgap(5);
 
         // Labels
         Label labelReportType = new Label("Report type:");
@@ -132,11 +121,12 @@ public class ReportTab implements GlobalTab {
 
         // Button
         Button buttonBrowseFolder = new Button(" ... ");
-        Button buttonCreateReport = new Button("Create Report");
+        Button buttonCreateReport = new Button("Create report");
 
-        buttonCreateReport.setPrefWidth(200);
         buttonCreateReport.setMinWidth(200);
-        buttonCreateReport.setMinHeight(30);
+        buttonCreateReport.setMinHeight(40);
+        buttonCreateReport.setDefaultButton(true);
+        buttonCreateReport.setAlignment(Pos.CENTER);
 
         // HBox
         HBox outputHBox = new HBox();
@@ -157,10 +147,10 @@ public class ReportTab implements GlobalTab {
             layout.addRow(0, labelReportType, comboBoxReportTypes);
             layout.addRow(1, labelReportName, fieldReportName);
             layout.addRow(2, labelOutputFolder, outputHBox);
-            layout.addRow(4, createSeparator());
-            layout.addRow(6, settingsPane);
-            layout.addRow(8, createSeparator());
-            layout.addRow(10, new Label(), buttonCreateReport);
+            layout.addRow(3, createSeparator());
+            layout.addRow(4, settingsPane);
+            layout.addRow(5, createSeparator());
+            layout.addRow(6, new Label(), buttonCreateReport);
         } else {
             layout.addRow(0, labelReportType, comboBoxReportTypes);
             layout.addRow(1, labelReportName, fieldReportName);
@@ -193,11 +183,9 @@ public class ReportTab implements GlobalTab {
     /**
      * Sets the no bookmarks layout.
      */
-    public void setNoBookmarksLayout() {
-        GridPane layout = new GridPane();
-
-        layout.setPadding(new Insets(5, 5, 5, 5));
-        layout.addRow(0, new Label("Bookmarks are required to create a report."));
+    void setNoBookmarksLayout() {
+        BorderPane layout = new BorderPane();
+        layout.setCenter(new Label("Bookmarks are required to create a report."));
 
         tab.setContent(layout);
     }
@@ -219,14 +207,14 @@ public class ReportTab implements GlobalTab {
     /**
      * @return The report name.
      */
-    public String getReportName() {
+    String getReportName() {
         return fieldReportName.getText();
     }
 
     /**
      * @return The output folder.
      */
-    public String getOutputFolder() {
+    String getOutputFolder() {
         return fieldOutputFolder.getText();
     }
 }

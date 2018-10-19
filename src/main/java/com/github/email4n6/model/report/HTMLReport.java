@@ -18,10 +18,10 @@
 
 package com.github.email4n6.model.report;
 
-import com.github.email4n6.message.MessageRow;
-import com.github.email4n6.message.MessageValue;
+import com.github.email4n6.model.message.MessageRow;
+import com.github.email4n6.model.message.MessageValue;
 import com.github.email4n6.model.Settings;
-import com.github.email4n6.model.casedao.Case;
+import com.github.email4n6.model.Case;
 import freemarker.template.*;
 import javafx.collections.FXCollections;
 import javafx.scene.control.*;
@@ -201,7 +201,7 @@ public class HTMLReport implements Report {
             configuration.setIncompatibleImprovements(new Version(2, 3, 23));
             configuration.setDefaultEncoding("UTF-8");
             configuration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-            configuration.setSetting("date_format", Settings.get(currentCase.getName(), "DateFormat"));
+            configuration.setSetting("date_format", Settings.get(currentCase.getName(), "date_format"));
 
             Template template = configuration.getTemplate(templateName);
             Writer fileWriter = new FileWriter(outputFile);

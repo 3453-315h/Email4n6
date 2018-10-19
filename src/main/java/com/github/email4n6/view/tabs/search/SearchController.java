@@ -18,12 +18,12 @@
 
 package com.github.email4n6.view.tabs.search;
 
-import com.github.email4n6.message.factory.MessageFactory;
-import com.github.email4n6.model.Searcher;
+import com.github.email4n6.model.Case;
 import com.github.email4n6.model.Settings;
-import com.github.email4n6.message.MessageRow;
+import com.github.email4n6.model.Version;
+import com.github.email4n6.model.message.MessageRow;
+import com.github.email4n6.model.message.factory.MessageFactory;
 import com.github.email4n6.view.messagepane.MessagePaneController;
-import com.github.email4n6.view.tabs.bookmarks.BookmarksModel;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -47,13 +47,23 @@ import java.util.Optional;
 public class SearchController {
 
     private SearchTab searchTab;
+    private SearchModel searchModel;
+    private MessageFactory messageFactory;
+    private Case currentCase;
+
     private Task<List<MessageRow>> worker;
 
-    public SearchController(SearchTab searchTab) {
+    public SearchController(SearchTab searchTab, SearchModel searchModel, MessageFactory messageFactory, Case currentCase) {
         this.searchTab = searchTab;
+        this.searchModel = searchModel;
+        this.messageFactory = messageFactory;
+        this.currentCase = currentCase;
 
-        this.searchTab.setOnSearch(new SearchListener());
-        this.searchTab.setOnSettingsClicked(new SettingsListener());
+        new MessagePaneController(searchTab.getMessagePane(), messageFactory);
+
+        // Catch events fired by the search tab.
+        searchTab.setOnSearch(new SearchListener());
+        searchTab.setOnSettingsClicked(new SettingsListener());
     }
 
     /**
@@ -73,27 +83,31 @@ public class SearchController {
                 worker.cancel(true);
             }
 
+            searchTab.setLoading(true);
+            searchTab.getMessagePane().clear();
+            searchTab.getMessagePane().getTable().getItems().clear();
+
             worker = new Task<List<MessageRow>>() {
                 @Override
                 protected List<MessageRow> call() {
                     log.info("Searching for: {}...", searchTab.getSearchQuery());
 
-                    searchTab.setLoading(true);
-                    searchTab.getMessagePane().getTable().getItems().clear();
-
-                    int searchLimit = Integer.parseInt(Settings.get(searchTab.getCurrentCase().getName(), "SearchLimit"));
-                    if (searchLimit == 0) searchLimit = Integer.MAX_VALUE;
+                    int searchLimit = Integer.parseInt(Settings.get(currentCase.getName(), "search_limit"));
+                    if (searchLimit == 0) {
+                        log.warn("Showing search results without a limit!");
+                        searchLimit = Integer.MAX_VALUE;
+                    }
 
                     List<MessageRow> messages = new ArrayList<>();
                     long startTime = System.currentTimeMillis();
 
-                    for (Document document : Searcher.getInstance(searchTab.getCurrentCase().getName()).search(searchTab.getSearchQuery(), searchLimit)) {
+                    for (Document document : searchModel.search(searchTab.getSearchQuery(), searchLimit)) {
                         if (isCancelled()) {
                             log.debug("Search query stopped.");
                             return new ArrayList<>(0);
                         }
 
-                        messages.add(searchTab.getMessageFactory().getMessageRow(document.get("ID")));
+                        messages.add(messageFactory.getMessageRow(document.get("id")));
                     }
 
                     long endTime = System.currentTimeMillis();
@@ -123,18 +137,18 @@ public class SearchController {
 
         @Override
         public void handle(MouseEvent event) {
-            String searchLimit = Settings.get(searchTab.getCurrentCase().getName(), "SearchLimit");
+            String searchLimit = Settings.get(currentCase.getName(), "search_limit");
 
             TextInputDialog dialog = new TextInputDialog(searchLimit);
-            dialog.setTitle("Email4n6");
-            dialog.setHeaderText("Search Limit");
+            dialog.setTitle("Email4n6 v" + Version.VERSION_NUMBER);
+            dialog.setHeaderText("Search limit");
 
             Optional<String> result = dialog.showAndWait();
 
             if (result.isPresent()) {
                 log.debug("Changing search limit to: {}", result.get());
 
-                Settings.set(searchTab.getCurrentCase().getName(), "SearchLimit", result.get());
+                Settings.set(currentCase.getName(), "search_limit", result.get());
                 searchTab.reload();
             }
         }

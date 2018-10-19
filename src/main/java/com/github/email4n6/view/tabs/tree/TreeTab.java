@@ -15,20 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.email4n6.view.tabs.tree;
 
-import com.github.email4n6.message.factory.MessageFactory;
-import com.github.email4n6.model.casedao.Case;
 import com.github.email4n6.view.messagepane.MessagePane;
-import com.github.email4n6.view.messagepane.MessagePaneController;
-import com.github.email4n6.view.tabs.spi.GlobalTab;
 import com.github.email4n6.view.tabs.tree.checktreeview.CheckTreeView;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.SplitPane;
@@ -42,31 +35,30 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Tab implementation which shows a file tree.
+ * Tab which shows a file tree.
  *
  * @author Marten4n6
  */
 @Slf4j
-public class TreeTab implements GlobalTab {
+public class TreeTab {
 
+    private @Getter Tab tab;
     private @Getter MessagePane messagePane;
-    private @Getter MessageFactory messageFactory;
-    private @Getter CheckTreeView<TreeObject> tree;
     private @Getter CheckBoxTreeItem<TreeObject> rootTreeItem;
+    private @Getter CheckTreeView<TreeObject> tree;
 
-    private @Setter EventHandler<ActionEvent> onInitialize;
+    // Listeners
     private @Setter ChangeListener<TreeItem<TreeObject>> onSelectionChange;
     private @Setter ListChangeListener<TreeItem<TreeObject>> onCheckedChange;
 
-    @Override
-    public Tab getTab(Case currentCase, MessageFactory messageFactory) {
-        this.messageFactory = messageFactory;
-
-        Tab tab = new Tab();
+    /**
+     * Initializes the tree tab.
+     */
+    public TreeTab() {
+        tab = new Tab();
         BorderPane tabLayout = new BorderPane();
-        messagePane = new MessagePane(currentCase);
 
-        new MessagePaneController(messagePane, messageFactory);
+        messagePane = new MessagePane();
 
         // Tab
         tab.setText("Tree");
@@ -97,8 +89,5 @@ public class TreeTab implements GlobalTab {
 
         // Add
         tabLayout.setCenter(splitPane);
-
-        onInitialize.handle(new ActionEvent());
-        return tab;
     }
 }

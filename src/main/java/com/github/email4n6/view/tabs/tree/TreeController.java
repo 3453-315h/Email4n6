@@ -15,19 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.email4n6.view.tabs.tree;
 
+import com.github.email4n6.view.messagepane.MessagePaneController;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.TreeItem;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -40,25 +38,24 @@ import java.util.concurrent.Executors;
 public class TreeController {
 
     private TreeTab treeTab;
+    private TreeModel treeModel;
     private ExecutorService executor;
 
-    public TreeController(TreeTab treeTab, List<TreeItem<TreeObject>> createdTreeItems) {
+    public TreeController(TreeTab treeTab, TreeModel treeModel) {
         this.treeTab = treeTab;
+        this.treeModel = treeModel;
         this.executor = Executors.newSingleThreadExecutor();
 
-        treeTab.setOnInitialize((ActionEvent event) -> {
-            createdTreeItems.forEach(treeItem -> {
-                treeTab.getRootTreeItem().getChildren().add(treeItem);
-            });
+        new MessagePaneController(treeTab.getMessagePane(), treeModel.getMessageFactory());
+
+        // Add the created tree items.
+        treeModel.getCreatedTreeItems().forEach(treeItem -> {
+            treeTab.getRootTreeItem().getChildren().add(treeItem);
         });
+
+        // Catch events fired by the tree tab.
         treeTab.setOnSelectionChange(new SelectionChangeListener());
         treeTab.setOnCheckedChange(new CheckedChangeListener());
-
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            // TODO - Find a better way to shut this down more nicely.
-            log.debug("Shutting down tree executor...");
-            executor.shutdownNow();
-        }));
     }
 
     /**
@@ -72,8 +69,6 @@ public class TreeController {
             boolean isAlreadyChecked = treeTab.getTree().getCheckModel().getCheckedItems().contains(treeTab.getTree().getSelectionModel().getSelectedItem());
             TreeItem<TreeObject> selectedItem = treeTab.getTree().getSelectionModel().getSelectedItem();
 
-            treeTab.getMessagePane().clear();
-
             if (!isAlreadyChecked || previousSelection != null) {
                 log.debug("Tree selection changed, updating...");
 
@@ -81,22 +76,16 @@ public class TreeController {
                     // Remove the previous selection from the message pane.
                     log.debug("Removing the previous selection.");
 
-                    executor.submit(TreeRunnable.getMessageTask(
-                            treeTab.getMessagePane(),
-                            treeTab.getMessageFactory(),
-                            previousSelection,
-                            true)
-                    );
+                    executor.submit(treeModel.createTreeTask(
+                            treeTab.getMessagePane(), previousSelection, true
+                    ));
                 }
 
                 if (!treeTab.getTree().getCheckModel().getCheckedItems().contains(selectedItem)) {
                     log.debug("Starting an add task for this folder...");
-                    treeTab.getMessagePane().setLoading(true);
 
-                    executor.submit(TreeRunnable.getMessageTask(
-                            treeTab.getMessagePane(),
-                            treeTab.getMessageFactory(),
-                            treeTab.getTree().getSelectionModel().getSelectedItem(),
+                    executor.submit(treeModel.createTreeTask(
+                            treeTab.getMessagePane(), treeTab.getTree().getSelectionModel().getSelectedItem(),
                             false
                     ));
                 }
@@ -123,12 +112,9 @@ public class TreeController {
                     if (selectedItem == null || !selectedItem.equals(item)) {
                         log.debug("Starting an \"add\" task for this folder...");
 
-                        executor.submit(TreeRunnable.getMessageTask(
-                                treeTab.getMessagePane(),
-                                treeTab.getMessageFactory(),
-                                item,
-                                false)
-                        );
+                        executor.submit(treeModel.createTreeTask(
+                                treeTab.getMessagePane(), item, false
+                        ));
                     }
                 });
 
@@ -138,7 +124,7 @@ public class TreeController {
                     boolean wasRunning = false;
 
                     // Stop any running "add" tasks for this folder...
-                    for (Task runningTask : TreeRunnable.getActiveTasks()) {
+                    for (Task runningTask : TreeModel.getActiveTasks()) {
                         if (runningTask.toString().equals(item.getValue().getFolderID())) {
                             log.debug("Stopping running \"add\" thread with ID \"{}\".", item.getValue().getFolderID());
 
@@ -154,12 +140,9 @@ public class TreeController {
                         if (selectedItem == null || !selectedItem.equals(item)) {
                             log.debug("Starting a \"remove\" task for this folder...");
 
-                            executor.submit(TreeRunnable.getMessageTask(
-                                    treeTab.getMessagePane(),
-                                    treeTab.getMessageFactory(),
-                                    item,
-                                    true)
-                            );
+                            executor.submit(treeModel.createTreeTask(
+                                    treeTab.getMessagePane(), item, true
+                            ));
                         }
                     }
                 });

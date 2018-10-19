@@ -18,10 +18,12 @@
 
 package com.github.email4n6.view.tabs.report;
 
+import com.github.email4n6.model.Case;
+import com.github.email4n6.model.message.factory.MessageFactory;
 import com.github.email4n6.model.report.HTMLReport;
 import com.github.email4n6.model.report.Report;
-import com.github.email4n6.model.tagsdao.TagsDAO;
 import com.github.email4n6.view.tabs.bookmarks.BookmarksModel;
+import com.github.email4n6.view.tabs.bookmarks.TagModel;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -35,17 +37,19 @@ import java.util.List;
 public class ReportModel {
 
     private @Getter BookmarksModel bookmarksModel;
-    private @Getter TagsDAO tagsDAO;
+    private @Getter TagModel tagModel;
+    private @Getter MessageFactory messageFactory;
+    private @Getter Case currentCase;
 
     private @Getter List<Report> reportTypes = new ArrayList<>();
 
-    public ReportModel(BookmarksModel bookmarksModel, TagsDAO tagsDAO) {
+    public ReportModel(BookmarksModel bookmarksModel, TagModel tagModel, MessageFactory messageFactory, Case currentCase) {
         this.bookmarksModel = bookmarksModel;
-        this.tagsDAO = tagsDAO;
+        this.tagModel = tagModel;
+        this.messageFactory = messageFactory;
+        this.currentCase = currentCase;
 
-        // Add all report types
+        // Add all report types here...
         reportTypes.add(new HTMLReport());
     }
-
-
 }

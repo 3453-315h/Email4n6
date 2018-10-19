@@ -15,18 +15,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.email4n6.view.messagepane;
 
-import com.github.email4n6.message.AttachmentRow;
-import com.github.email4n6.message.MessageRow;
-import com.github.email4n6.message.MessageValue;
-import com.github.email4n6.message.factory.MessageFactory;
-import com.github.email4n6.model.tagsdao.TagsDAO;
-import com.github.email4n6.view.tabs.bookmarks.BookmarksModel;
+import com.github.email4n6.model.message.AttachmentRow;
+import com.github.email4n6.model.message.MessageRow;
+import com.github.email4n6.model.message.MessageValue;
+import com.github.email4n6.model.message.factory.MessageFactory;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.DirectoryChooser;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,7 +34,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.stream.Collectors;
 
 /**
  * The default context menu used by the message pane.
@@ -43,30 +41,27 @@ import java.util.stream.Collectors;
  * @author Marten4n6
  */
 @Slf4j
-public class DefaultContextMenu extends ContextMenu {
+class DefaultContextMenu extends ContextMenu {
 
-    private MessagePane messagePane;
-    private MessageFactory messageFactory;
-
-    public DefaultContextMenu(MessagePane messagePane, MessageFactory messageFactory) {
-        this.messagePane = messagePane;
-        this.messageFactory = messageFactory;
-
-        initComponents();
-    }
-
-    private void initComponents() {
+    /**
+     * Initializes the default context menu.
+     */
+    DefaultContextMenu(MessagePane messagePane, MessageFactory messageFactory) {
         Menu menuBookmark = new Menu("Bookmark");
         Menu menuTag = new Menu("Tag");
         Menu menuExport = new Menu("Export");
 
+        menuBookmark.setGraphic(new ImageView(new Image(this.getClass().getResourceAsStream("/images/star.png"))));
+        menuTag.setGraphic(new ImageView(new Image(this.getClass().getResourceAsStream("/images/tag.png"))));
+        menuExport.setGraphic(new ImageView(new Image(this.getClass().getResourceAsStream("/images/export.png"))));
+
         // Bookmark
-        MenuItem bookmarksAddSelected = new MenuItem("Add Selected");
-        MenuItem bookmarksRemoveSelected = new MenuItem("Remove Selected");
+        MenuItem bookmarksAddSelected = new MenuItem("Add selected");
+        MenuItem bookmarksRemoveSelected = new MenuItem("Remove selected");
 
         // Tag
-        MenuItem tagAddSelected = new MenuItem("Add Selected");
-        MenuItem tagRemoveSelected = new MenuItem("Remove Selected");
+        MenuItem tagAddSelected = new MenuItem("Add selected");
+        MenuItem tagRemoveSelected = new MenuItem("Remove selected");
 
         // Export
         MenuItem exportAttachments = new MenuItem("Attachments");
@@ -115,7 +110,8 @@ public class DefaultContextMenu extends ContextMenu {
         });
         tagAddSelected.setOnAction((event) -> {
             TagStage tagStage = new TagStage();
-            tagStage.createAndShow();
+
+            tagStage.show();
 
             tagStage.setOnAddTag((event2) -> {
                 messagePane.getTable().getSelectionModel().getSelectedItems().forEach(row -> {
@@ -135,14 +131,14 @@ public class DefaultContextMenu extends ContextMenu {
             File selectedDirectory = directoryChooser.showDialog(messagePane.getTable().getScene().getWindow());
 
             if (selectedDirectory != null) {
-                boolean wasAttachments = false;
+                boolean hasAttachments = false;
 
                 for (MessageRow row : messagePane.getTable().getSelectionModel().getSelectedItems()) {
                     MessageValue messageValue = messageFactory.getMessageValue(row.getId());
 
                     for (AttachmentRow attachment : messageValue.getAttachments()) {
                         try {
-                            wasAttachments = true;
+                            hasAttachments = true;
 
                             Files.copy(
                                     attachment.getInputStream(),
@@ -157,18 +153,10 @@ public class DefaultContextMenu extends ContextMenu {
                     }
                 }
 
-                if (wasAttachments) {
-                    new Alert(
-                            Alert.AlertType.INFORMATION,
-                            "Attachments exported successfully.",
-                            ButtonType.CLOSE
-                    ).showAndWait();
+                if (hasAttachments) {
+                    messagePane.displayMessage("Attachments exported successfully.");
                 } else {
-                    new Alert(
-                            Alert.AlertType.WARNING,
-                            "Failed to find attachments to export.",
-                            ButtonType.CLOSE
-                    ).showAndWait();
+                    messagePane.displayError("Failed to find attachments to export.");
                 }
             }
         });

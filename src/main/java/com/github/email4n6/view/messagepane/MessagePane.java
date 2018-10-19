@@ -15,14 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.email4n6.view.messagepane;
 
-import com.github.email4n6.model.casedao.Case;
-import com.github.email4n6.model.Settings;
-import com.github.email4n6.message.AttachmentRow;
-import com.github.email4n6.message.MessageRow;
-import javafx.application.Platform;
+import com.github.email4n6.model.Version;
+import com.github.email4n6.model.message.AttachmentRow;
+import com.github.email4n6.model.message.MessageRow;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.binding.StringExpression;
@@ -30,14 +27,14 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Worker;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -48,11 +45,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
@@ -66,10 +58,7 @@ import java.util.Optional;
 public class MessagePane {
 
     private @Getter SplitPane pane;
-    private @Getter Case currentCase;
     private @Getter TableView<MessageRow> table;
-
-    private SimpleDateFormat DATE_FORMAT;
 
     private @Getter WebView bodyView;
     private @Getter WebView headersView;
@@ -78,10 +67,7 @@ public class MessagePane {
     private @Setter ChangeListener<MessageRow> onMessageSelectionChange;
     private @Setter EventHandler<ActionEvent> onOpenAttachment;
 
-    public MessagePane(Case currentCase) {
-        this.currentCase = currentCase;
-        this.DATE_FORMAT = new SimpleDateFormat(Settings.get(currentCase.getName(), "DateFormat"));
-
+    public MessagePane() {
         // Split Pane
         pane = new SplitPane();
 
@@ -125,7 +111,7 @@ public class MessagePane {
                     setText(null);
                     setStyle("");
                 } else {
-                    setText(DATE_FORMAT.format(item));
+                    setText(new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss").format(item));
                 }
             }
         });
@@ -206,6 +192,7 @@ public class MessagePane {
 
         messageTab.setClosable(false);
         messageTab.setText("Body");
+        messageTab.setGraphic(new ImageView(new Image(this.getClass().getResourceAsStream("/images/message.png"))));
         messageTab.setContent(layout);
 
         bodyView.setContextMenuEnabled(false); // We have our own.
@@ -224,7 +211,10 @@ public class MessagePane {
 
         headersTab.setClosable(false);
         headersTab.setText("Headers");
+        headersTab.setGraphic(new ImageView(new Image(this.getClass().getResourceAsStream("/images/sent.png"))));
         headersTab.setContent(layout);
+
+        headersView.setContextMenuEnabled(false);
 
         layout.setCenter(headersView);
         return headersTab;
@@ -255,7 +245,7 @@ public class MessagePane {
                     setText(null);
                     setStyle("");
                 } else {
-                    setText(DATE_FORMAT.format(item));
+                    setText(new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss").format(item));
                 }
             }
         });
@@ -293,6 +283,7 @@ public class MessagePane {
         StringExpression stringExpression = Bindings.concat("Attachments (", sizeBinding.asString(), ")");
         attachmentsTab.textProperty().bind(stringExpression);
         attachmentsTab.setContent(layout);
+        attachmentsTab.setGraphic(new ImageView(new Image(this.getClass().getResourceAsStream("/images/attachment.png"))));
 
         layout.setCenter(attachmentsTable);
         return attachmentsTab;
@@ -303,10 +294,10 @@ public class MessagePane {
      *
      * @return The (optional) ButtonType clicked.
      */
-    public Optional<ButtonType> displayConfirmation(String message) {
+    Optional<ButtonType> displayConfirmation(String message) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, message, ButtonType.YES, ButtonType.NO);
 
-        alert.setTitle("Email4n6");
+        alert.setTitle("Email4n6 v" + Version.VERSION_NUMBER);
         alert.setHeaderText(null);
         alert.initModality(Modality.WINDOW_MODAL);
         alert.initOwner(table.getScene().getWindow());
@@ -317,10 +308,24 @@ public class MessagePane {
     /**
      * Shows an error alert to the user.
      */
-    public void displayError(String message) {
+    void displayError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR, message);
 
-        alert.setTitle("Email4n6");
+        alert.setTitle("Email4n6 v" + Version.VERSION_NUMBER);
+        alert.setHeaderText(null);
+        alert.initModality(Modality.WINDOW_MODAL);
+        alert.initOwner(table.getScene().getWindow());
+
+        alert.show();
+    }
+
+    /**
+     * Shows an error alert to the user.
+     */
+    void displayMessage(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, message);
+
+        alert.setTitle("Email4n6 v" + Version.VERSION_NUMBER);
         alert.setHeaderText(null);
         alert.initModality(Modality.WINDOW_MODAL);
         alert.initOwner(table.getScene().getWindow());

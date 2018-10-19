@@ -18,7 +18,7 @@
 
 package com.github.email4n6.model;
 
-import com.github.email4n6.utils.OSUtils;
+import com.github.email4n6.utils.PathUtils;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,13 +46,13 @@ public final class Settings {
         try {
             Properties properties = new Properties();
 
-            if (OSUtils.getSettingsFile(caseName).exists()) {
+            if (PathUtils.getSettingsFile(caseName).exists()) {
                 // Load existing settings.
-                @Cleanup FileInputStream inputStream = new FileInputStream(OSUtils.getSettingsFile(caseName));
+                @Cleanup FileInputStream inputStream = new FileInputStream(PathUtils.getSettingsFile(caseName));
                 properties.load(inputStream);
             }
 
-            @Cleanup FileOutputStream outputStream = new FileOutputStream(OSUtils.getSettingsFile(caseName));
+            @Cleanup FileOutputStream outputStream = new FileOutputStream(PathUtils.getSettingsFile(caseName));
 
             properties.put(key, value);
             properties.store(outputStream, null);
@@ -67,7 +67,7 @@ public final class Settings {
     public static String get(String caseName, String key) {
         try {
             Properties properties = new Properties();
-            @Cleanup FileInputStream inputStream = new FileInputStream(OSUtils.getSettingsFile(caseName));
+            @Cleanup FileInputStream inputStream = new FileInputStream(PathUtils.getSettingsFile(caseName));
 
             properties.load(inputStream);
             return properties.get(key).toString();

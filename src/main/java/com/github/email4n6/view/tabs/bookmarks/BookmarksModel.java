@@ -15,12 +15,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.email4n6.view.tabs.bookmarks;
 
-import com.github.email4n6.message.MessageRow;
-import com.github.email4n6.model.casedao.Case;
-import com.github.email4n6.model.H2Database;
+import com.github.email4n6.model.message.MessageRow;
+import com.zaxxer.hikari.HikariDataSource;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,15 +30,14 @@ import java.util.List;
  * Bookmarks model.
  *
  * @author Marten4n6
- * @see H2Database
  */
 @Slf4j
 public class BookmarksModel {
 
-    private H2Database database;
+    private HikariDataSource database;
     private List<BookmarkListener> listeners;
 
-    public BookmarksModel(H2Database database) {
+    public BookmarksModel(HikariDataSource database) {
         this.database = database;
         this.listeners = new ArrayList<>();
     }
@@ -52,7 +49,7 @@ public class BookmarksModel {
         try {
             List<String> bookmarks = new ArrayList<>();
 
-            @Cleanup Connection connection = database.getDataSource().getConnection();
+            @Cleanup Connection connection = database.getConnection();
             @Cleanup Statement statement = connection.createStatement();
             @Cleanup ResultSet resultSet = statement.executeQuery("SELECT * FROM Bookmarks");
 
@@ -73,7 +70,7 @@ public class BookmarksModel {
      */
     public boolean hasBookmarks() {
         try {
-            @Cleanup Connection connection = database.getDataSource().getConnection();
+            @Cleanup Connection connection = database.getConnection();
             @Cleanup Statement statement = connection.createStatement();
             @Cleanup ResultSet resultSet = statement.executeQuery("SELECT TOP(1) 1 FROM Bookmarks");
 
@@ -90,8 +87,8 @@ public class BookmarksModel {
      */
     public boolean isBookmark(String id) {
         try {
-            @Cleanup Connection connection = database.getDataSource().getConnection();
-            @Cleanup PreparedStatement statement = connection.prepareStatement("SELECT * FROM Bookmarks WHERE ID=?");
+            @Cleanup Connection connection = database.getConnection();
+            @Cleanup PreparedStatement statement = connection.prepareStatement("SELECT * FROM Bookmarks WHERE id=?");
 
             statement.setString(1, id);
             @Cleanup ResultSet resultSet = statement.executeQuery();
@@ -109,8 +106,8 @@ public class BookmarksModel {
      */
     public void addBookmark(MessageRow row) {
         try {
-            @Cleanup Connection connection = database.getDataSource().getConnection();
-            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Bookmarks(ID) VALUES (?)");
+            @Cleanup Connection connection = database.getConnection();
+            @Cleanup PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO Bookmarks(id) VALUES (?)");
 
             preparedStatement.setString(1, row.getId());
             preparedStatement.execute();
@@ -127,8 +124,8 @@ public class BookmarksModel {
      */
     public void removeBookmark(MessageRow row) {
         try {
-            @Cleanup Connection connection = database.getDataSource().getConnection();
-            @Cleanup PreparedStatement statement = connection.prepareStatement("DELETE FROM Bookmarks WHERE ID=?");
+            @Cleanup Connection connection = database.getConnection();
+            @Cleanup PreparedStatement statement = connection.prepareStatement("DELETE FROM Bookmarks WHERE id=?");
 
             statement.setString(1, row.getId());
             statement.execute();
@@ -155,7 +152,7 @@ public class BookmarksModel {
      *
      * @see BookmarkListener
      */
-    public void addListener(BookmarkListener bookmarkListener) {
+    void addListener(BookmarkListener bookmarkListener) {
         listeners.add(bookmarkListener);
     }
 }

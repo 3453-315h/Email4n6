@@ -15,62 +15,55 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.email4n6.model;
 
-import com.github.email4n6.utils.OSUtils;
-import lombok.Synchronized;
+import com.github.email4n6.utils.PathUtils;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 /**
  * This class handles indexing.
- * (Required before using the Searcher)
  *
  * @author Marten4n6
  */
 @Slf4j
 public class Indexer {
 
-    private String caseName;
-    private IndexWriter indexWriter;
+    private @Getter IndexWriter indexWriter;
 
     public Indexer(String caseName) {
-        this.caseName = caseName;
-    }
+        try {
+            // https://lucene.apache.org/core/7_4_0/core/org/apache/lucene/store/FSDirectory.html
+            // https://lucene.apache.org/core/7_4_0/core/org/apache/lucene/index/IndexWriterConfig.html
+            // https://lucene.apache.org/core/7_4_0/core/org/apache/lucene/index/IndexWriter.html
+            log.info("Initializing the indexer...");
 
-    // TODO - Add multi-threading support for adding documents.
-    public @Synchronized IndexWriter getIndexWriter() {
-        if (indexWriter == null) {
-            try {
-                Directory indexDirectory = FSDirectory.open(new File(OSUtils.getIndexPath(caseName)).toPath());
-                IndexWriterConfig config = new IndexWriterConfig(new StandardAnalyzer());
-                indexWriter = new IndexWriter(indexDirectory, config);
-            } catch (IOException ex) {
-                log.error(ex.getMessage(), ex);
-            }
+            Directory directory = FSDirectory.open(Paths.get(PathUtils.getIndexPath(caseName)));
+            IndexWriterConfig configuration = new IndexWriterConfig();
+            indexWriter = new IndexWriter(directory, configuration);
+        } catch (IOException ex) {
+            log.error(ex.getMessage(), ex);
         }
-        return indexWriter;
     }
 
     /**
-     * Commits and closes the index.
+     * Commits and closes the indexer.
      */
-    public void commitAndClose() {
-        if (indexWriter != null) {
-            try {
-                indexWriter.commit();
-                indexWriter.close();
-            } catch (IOException ex) {
-                log.error(ex.getMessage(), ex);
-            }
+    public void close() {
+        try {
+            log.info("Closing the indexer...");
+
+            indexWriter.commit();
+            indexWriter.close();
+        } catch (IOException ex) {
+            log.error(ex.getMessage(), ex);
         }
     }
 }

@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.email4n6.view.tabs.report;
 
 import com.github.email4n6.model.report.Report;
@@ -39,6 +38,7 @@ public class ReportController {
         this.reportTab = reportTab;
         this.reportModel = reportModel;
 
+        // Catch events fired by the report tab.
         reportTab.setOnTabSelection(new TabSelectionListener());
         reportTab.setOnCreateReport(new CreateReportListener());
     }
@@ -68,12 +68,12 @@ public class ReportController {
             Report selectedReport = reportTab.getComboBoxReportTypes().getSelectionModel().getSelectedItem();
 
             ReportConfiguration configuration = ReportConfiguration.builder()
-                    .currentCase(reportTab.getCurrentCase())
+                    .currentCase(reportModel.getCurrentCase())
                     .reportName(reportTab.getReportName())
                     .outputFolder(new File(reportTab.getOutputFolder()))
                     .bookmarksModel(reportModel.getBookmarksModel())
-                    .tagsDAO(reportModel.getTagsDAO())
-                    .messageFactory(reportTab.getMessageFactory()).build();
+                    .tagsDAO(reportModel.getTagModel())
+                    .messageFactory(reportModel.getMessageFactory()).build();
 
             selectedReport.createReport(configuration);
         }

@@ -18,6 +18,7 @@
 
 package com.github.email4n6.view.messagepane;
 
+import com.github.email4n6.model.Version;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -43,15 +44,15 @@ public class TagStage {
     private @Setter EventHandler<ActionEvent> onAddTag;
 
     /**
-     * Creates and shows the tag stage.
+     * Initializes the tag stage.
      */
-    public void createAndShow() {
+    TagStage() {
         stage = new Stage();
         GridPane gridPane = new GridPane();
         Scene scene = new Scene(gridPane, 370, 100);
 
         // Stage
-        stage.setTitle("Email4n6");
+        stage.setTitle("Email4n6 v" + Version.VERSION_NUMBER);
         stage.setResizable(false);
 
         // Grid Pane
@@ -64,15 +65,13 @@ public class TagStage {
         GridPane.setHgrow(textField, Priority.ALWAYS);
 
         // Button
-        Button button = new Button("Add Tag");
+        Button button = new Button("Add tag");
 
         // Add
         gridPane.add(textField, 1, 0);
         gridPane.add(button, 2, 0);
 
         stage.setScene(scene);
-        stage.centerOnScreen();
-        stage.show();
 
         // Listeners
         button.setOnAction((event) -> {
@@ -81,9 +80,11 @@ public class TagStage {
         });
     }
 
-    /**
-     * Closes the tag stage.
-     */
+    public void show() {
+        stage.centerOnScreen();
+        stage.show();
+    }
+
     public void close() {
         stage.close();
     }

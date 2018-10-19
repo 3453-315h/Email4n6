@@ -19,13 +19,11 @@
 package com.github.email4n6;
 
 import com.github.email4n6.model.Version;
-import com.github.email4n6.utils.OSUtils;
+import com.github.email4n6.utils.PathUtils;
+import com.github.email4n6.view.StartupStage;
 import com.github.email4n6.view.TabbedScene;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 
@@ -57,22 +55,22 @@ public class Email4n6 extends Application {
         stage.setTitle("Email4n6 v" + Version.VERSION_NUMBER);
         stage.centerOnScreen();
         stage.show();
+        stage.setOnCloseRequest((event) -> {
+            log.info("Shutting down...");
+
+            // TODO - Fire an event to shutdown gracefully (TreeTab executor).
+            // TODO - Shutdown confirmation (with "don't ask again").
+            Platform.exit();
+            System.exit(0);
+        });
     }
 
     private void confirmLiveInCurrentDirectory() {
-        if (!Files.exists(Paths.get(OSUtils.getCasesPath()))) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "", ButtonType.YES, ButtonType.NO);
-            Label content = new Label();
+        if (!Files.exists(Paths.get(PathUtils.getCasesPath()))) {
+            StartupStage startupStage = new StartupStage();
+            startupStage.showAndWait();
 
-            content.setText("Email4n6 will live in the current folder, are you sure you want to continue?");
-            content.setWrapText(true);
-
-            alert.setTitle("Email4n6");
-            alert.setHeaderText(null);
-            alert.getDialogPane().setContent(content);
-            alert.showAndWait();
-
-            if (alert.getResult() == ButtonType.NO) {
+            if (!startupStage.isConfirmed()) {
                 Platform.exit();
                 System.exit(0);
             }
@@ -80,8 +78,7 @@ public class Email4n6 extends Application {
     }
 
     private void createDirectories() {
-        new File(OSUtils.getApplicationPath()).mkdir();
-        new File(OSUtils.getCasesPath()).mkdir();
-        new File(OSUtils.getTempPath()).mkdir();
+        new File(PathUtils.getCasesPath()).mkdir();
+        new File(PathUtils.getTempPath()).mkdir();
     }
 }

@@ -15,13 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.email4n6.view.tabs.bookmarks;
 
-import com.github.email4n6.message.MessageRow;
+import com.github.email4n6.model.message.MessageRow;
+import com.github.email4n6.model.message.factory.MessageFactory;
+import com.github.email4n6.view.messagepane.MessagePaneController;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 
 /**
  * Controls the bookmarks tab.
@@ -33,12 +32,20 @@ public class BookmarksController {
     private BookmarksTab bookmarksTab;
     private BookmarksModel bookmarksModel;
 
-    public BookmarksController(BookmarksTab bookmarksTab, BookmarksModel bookmarksModel) {
+    public BookmarksController(BookmarksTab bookmarksTab, BookmarksModel bookmarksModel, MessageFactory messageFactory) {
         this.bookmarksTab = bookmarksTab;
         this.bookmarksModel = bookmarksModel;
 
+        new MessagePaneController(bookmarksTab.getMessagePane(), messageFactory);
+
+        // Add existing bookmarks.
+        bookmarksModel.getBookmarks().forEach(bookmark -> {
+            MessageRow row = messageFactory.getMessageRow(bookmark);
+
+            bookmarksTab.getMessagePane().getTable().getItems().add(row);
+        });
+
         bookmarksModel.addListener(new BookmarkListener());
-        bookmarksTab.setOnInitialize(new InitializeListener());
     }
 
     /**
@@ -56,30 +63,12 @@ public class BookmarksController {
         @Override
         public void bookmarkRemoved(MessageRow row) {
             Platform.runLater(() -> {
-                if (bookmarksTab.getMessagePane().getTable().getSelectionModel().getSelectedItem() != null &&
-                        bookmarksTab.getMessagePane().getTable().getSelectionModel().getSelectedItem().equals(row)) {
+                if (bookmarksTab.getMessagePane().getTable().getSelectionModel().getSelectedItem() != null
+                    && bookmarksTab.getMessagePane().getTable().getSelectionModel().getSelectedItem().equals(row)) {
                     bookmarksTab.getMessagePane().clear();
                 }
 
                 bookmarksTab.getMessagePane().getTable().getItems().remove(row);
-            });
-        }
-    }
-
-    /**
-     * Handles the bookmarks tab initialize event.
-     */
-    class InitializeListener implements EventHandler<ActionEvent> {
-
-        @Override
-        public void handle(ActionEvent event) {
-            Platform.runLater(() -> {
-                // Add existing bookmarks.
-                bookmarksModel.getBookmarks().forEach(bookmark -> {
-                    MessageRow row = bookmarksTab.getMessageFactory().getMessageRow(bookmark);
-
-                    bookmarksTab.getMessagePane().getTable().getItems().add(row);
-                });
             });
         }
     }

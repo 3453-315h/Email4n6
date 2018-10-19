@@ -15,56 +15,39 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.email4n6.view.tabs.bookmarks;
 
-import com.github.email4n6.model.casedao.Case;
-import com.github.email4n6.message.factory.MessageFactory;
 import com.github.email4n6.view.messagepane.MessagePane;
-import com.github.email4n6.view.messagepane.MessagePaneController;
-import com.github.email4n6.view.tabs.spi.GlobalTab;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * The bookmark tab.
  *
  * @author Marten4n6
  */
-public class BookmarksTab implements GlobalTab {
+public class BookmarksTab {
 
-    private @Getter MessageFactory messageFactory;
+    private @Getter Tab tab;
     private @Getter MessagePane messagePane;
 
-    // Lets the controller know we're good to go so
-    // that it can add existing bookmarks.
-    private @Setter EventHandler<ActionEvent> onInitialize;
-
-    @Override
-    public Tab getTab(Case currentCase, MessageFactory messageFactory) {
-        this.messageFactory = messageFactory;
-
-        Tab tab = new Tab();
+    /**
+     * Initializes the bookmarks tab.
+     */
+    public BookmarksTab() {
+        tab = new Tab();
         BorderPane tabLayout = new BorderPane();
-
-        messagePane = new MessagePane(currentCase);
-        new MessagePaneController(messagePane, messageFactory);
 
         // Tab
         tab.setText("Bookmarks");
         tab.setClosable(false);
         tab.setContent(tabLayout);
-        tab.setGraphic(new ImageView(new Image(this.getClass().getResourceAsStream("/images/bookmark.png"))));
+        tab.setGraphic(new ImageView(new Image(this.getClass().getResourceAsStream("/images/star.png"))));
 
+        messagePane = new MessagePane();
         tabLayout.setCenter(messagePane.getPane());
-
-        this.onInitialize.handle(new ActionEvent());
-        return tab;
     }
 }
