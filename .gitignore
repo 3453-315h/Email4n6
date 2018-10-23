@@ -16,3 +16,8 @@
 .idea/markdown-navigator*
 
 target/
+
+# eclipse project file
+.settings/
+.classpath
+.project
