@@ -38,7 +38,7 @@ public class PathUtils {
     /**
      * @return The path to where Email4n6 lives (in the running JAR's directory).
      */
-    private static String getApplicationPath() {
+    public static String getApplicationPath() {
         try {
             return new File(PathUtils.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent();
         } catch (URISyntaxException ex) {
