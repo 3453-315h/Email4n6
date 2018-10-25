@@ -256,7 +256,7 @@ public class HomeTab {
 
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(ownerWindow);
-            stage.setTitle("Email4n6 v" + Version.VERSION_NUMBER);
+            stage.setTitle("New Case Information");
             stage.setScene(scene);
 
             // Listeners
