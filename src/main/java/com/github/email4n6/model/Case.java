@@ -31,6 +31,7 @@ import lombok.Setter;
 @Builder
 public class Case {
 
+	private @Getter final int id;
     private @Getter String name, description, investigator;
     private @Getter @Setter String size;
     private @Getter Set<String> sources;

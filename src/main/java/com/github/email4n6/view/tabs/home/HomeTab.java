@@ -96,12 +96,16 @@ public class HomeTab {
      */
     private TableView<Case> createCaseTable() {
         TableView<Case> table = new TableView<>();
-
+        
+        TableColumn<Case, String> columnId = new TableColumn<>("N°");
         TableColumn<Case, String> columnName = new TableColumn<>("Name");
         TableColumn<Case, String> columnDescription = new TableColumn<>("Description");
         TableColumn<Case, String> columnInvestigator = new TableColumn<>("Investigator");
         TableColumn<Case, String> columnSize = new TableColumn<>("Size");
 
+        columnId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        columnId.setMinWidth(50);
+        columnId.setMaxWidth(100);
         columnName.setCellValueFactory(new PropertyValueFactory<>("name"));
         columnDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
         columnInvestigator.setCellValueFactory(new PropertyValueFactory<>("investigator"));
@@ -110,6 +114,8 @@ public class HomeTab {
         table.setPlaceholder(new Label("No cases have been created."));
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
+        table.getColumns().add(columnId);
         table.getColumns().add(columnName);
         table.getColumns().add(columnDescription);
         table.getColumns().add(columnInvestigator);
@@ -345,6 +351,7 @@ public class HomeTab {
                     displayError("Please specify a valid source.");
                 } else {
                     createdCase = Case.builder()
+                    		.id(getTable().getItems().size()+1) // TODO set an incremental value
                             .name(fieldName.getText())
                             .investigator(fieldInvestigator.getText())
                             .description(fieldDescription.getText())
