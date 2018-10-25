@@ -18,22 +18,27 @@
 
 package com.github.email4n6.model.parser;
 
-import com.github.email4n6.model.Case;
-import com.github.email4n6.model.Indexer;
-import com.github.email4n6.view.tabs.home.loading.LoadingStage;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import com.github.email4n6.model.Case;
+import com.github.email4n6.model.Indexer;
+import com.github.email4n6.view.tabs.home.loading.LoadingStage;
+
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * The class handles parsing the case's source files.

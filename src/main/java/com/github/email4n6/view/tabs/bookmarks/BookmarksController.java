@@ -20,6 +20,7 @@ package com.github.email4n6.view.tabs.bookmarks;
 import com.github.email4n6.model.message.MessageRow;
 import com.github.email4n6.model.message.factory.MessageFactory;
 import com.github.email4n6.view.messagepane.MessagePaneController;
+
 import javafx.application.Platform;
 
 /**

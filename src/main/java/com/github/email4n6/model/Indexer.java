@@ -17,16 +17,18 @@
  */
 package com.github.email4n6.model;
 
-import com.github.email4n6.utils.PathUtils;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import java.io.IOException;
+import java.nio.file.Paths;
+
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
-import java.io.IOException;
-import java.nio.file.Paths;
+import com.github.email4n6.utils.PathUtils;
+
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This class handles indexing.

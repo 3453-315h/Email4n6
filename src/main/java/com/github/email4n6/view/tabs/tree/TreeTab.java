@@ -19,6 +19,7 @@ package com.github.email4n6.view.tabs.tree;
 
 import com.github.email4n6.view.messagepane.MessagePane;
 import com.github.email4n6.view.tabs.tree.checktreeview.CheckTreeView;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;

@@ -17,11 +17,11 @@
  */
 package com.github.email4n6.model;
 
+import java.util.Set;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Set;
 
 /**
  * Represents a case.

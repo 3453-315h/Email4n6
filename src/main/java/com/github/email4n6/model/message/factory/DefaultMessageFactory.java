@@ -18,6 +18,9 @@
 
 package com.github.email4n6.model.message.factory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.github.email4n6.model.Case;
 import com.github.email4n6.model.message.MessageRow;
 import com.github.email4n6.model.message.MessageValue;
@@ -26,10 +29,8 @@ import com.github.email4n6.view.tabs.bookmarks.BookmarksModel;
 import com.github.email4n6.view.tabs.bookmarks.TagModel;
 import com.github.email4n6.view.tabs.search.SearchModel;
 import com.github.email4n6.view.tabs.tree.TreeObject;
-import javafx.scene.control.TreeItem;
 
-import java.util.ArrayList;
-import java.util.List;
+import javafx.scene.control.TreeItem;
 
 /**
  * Default message factory implementation.

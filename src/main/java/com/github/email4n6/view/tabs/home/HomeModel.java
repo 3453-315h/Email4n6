@@ -18,8 +18,21 @@
 
 package com.github.email4n6.view.tabs.home;
 
-import com.github.email4n6.model.Settings;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 import com.github.email4n6.model.Case;
+import com.github.email4n6.model.Settings;
 import com.github.email4n6.model.parser.FileParser;
 import com.github.email4n6.model.parser.ParserFactory;
 import com.github.email4n6.utils.PathUtils;
@@ -27,6 +40,7 @@ import com.github.email4n6.view.tabs.home.loading.LoadingStage;
 import com.google.gson.Gson;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -35,17 +49,6 @@ import lombok.Cleanup;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 /**
  * Model for the home tab, handles retrieving and persisting cases.

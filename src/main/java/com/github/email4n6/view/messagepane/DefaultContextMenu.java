@@ -17,23 +17,26 @@
  */
 package com.github.email4n6.view.messagepane;
 
-import com.github.email4n6.model.message.AttachmentRow;
-import com.github.email4n6.model.message.MessageRow;
-import com.github.email4n6.model.message.MessageValue;
-import com.github.email4n6.model.message.factory.MessageFactory;
-import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
-import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.stage.DirectoryChooser;
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+
+import com.github.email4n6.model.message.AttachmentRow;
+import com.github.email4n6.model.message.MessageRow;
+import com.github.email4n6.model.message.MessageValue;
+import com.github.email4n6.model.message.factory.MessageFactory;
+
+import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.DirectoryChooser;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * The default context menu used by the message pane.

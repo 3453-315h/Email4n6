@@ -18,11 +18,16 @@
 
 package com.github.email4n6.model.parser.pst;
 
-import com.pff.*;
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.IOException;
 import java.util.zip.Adler32;
+
+import com.pff.PSTAttachment;
+import com.pff.PSTException;
+import com.pff.PSTFile;
+import com.pff.PSTFolder;
+import com.pff.PSTObject;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Static class for generating IDs relevant to this parser.

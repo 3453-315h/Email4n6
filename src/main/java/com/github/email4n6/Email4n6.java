@@ -18,10 +18,16 @@
 
 package com.github.email4n6;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Optional;
+
 import com.github.email4n6.model.Version;
 import com.github.email4n6.utils.PathUtils;
 import com.github.email4n6.view.StartupStage;
 import com.github.email4n6.view.TabbedScene;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -29,11 +35,6 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Optional;
 
 /**
  * This is the starting class.

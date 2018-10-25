@@ -18,11 +18,11 @@
 
 package com.github.email4n6.model.message;
 
-import lombok.Builder;
-import lombok.Getter;
-
 import java.io.InputStream;
 import java.util.Date;
+
+import lombok.Builder;
+import lombok.Getter;
 
 /**
  * Represents an attachment row.

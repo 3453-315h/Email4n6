@@ -19,6 +19,7 @@
 package com.github.email4n6.view.messagepane;
 
 import com.github.email4n6.model.Version;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;

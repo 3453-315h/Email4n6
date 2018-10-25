@@ -18,6 +18,7 @@
 package com.github.email4n6.view.tabs.search;
 
 import com.github.email4n6.view.messagepane.MessagePane;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

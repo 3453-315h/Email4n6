@@ -18,10 +18,10 @@
 
 package com.github.email4n6.utils;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.File;
 import java.net.URISyntaxException;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Static class for paths related to this application.

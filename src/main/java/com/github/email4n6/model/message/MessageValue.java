@@ -18,10 +18,10 @@
 
 package com.github.email4n6.model.message;
 
+import java.util.List;
+
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
 
 /**
  * The message body, headers etc which get shown when the message row is selected.

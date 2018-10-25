@@ -18,22 +18,7 @@
 
 package com.github.email4n6.model.report;
 
-import com.github.email4n6.model.message.MessageRow;
-import com.github.email4n6.model.message.MessageValue;
-import com.github.email4n6.model.Settings;
-import com.github.email4n6.model.Case;
-import freemarker.template.*;
-import javafx.collections.FXCollections;
-import javafx.scene.control.*;
-import javafx.scene.control.Label;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import lombok.extern.slf4j.Slf4j;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -41,8 +26,36 @@ import java.io.Writer;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.swing.SwingUtilities;
+
+import com.github.email4n6.model.Case;
+import com.github.email4n6.model.Settings;
+import com.github.email4n6.model.message.MessageRow;
+import com.github.email4n6.model.message.MessageValue;
+
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
+import freemarker.template.Version;
+import javafx.collections.FXCollections;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Report implementation which generates HTML reports (based on X-Ways).

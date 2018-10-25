@@ -17,17 +17,17 @@
  */
 package com.github.email4n6.view.tabs.tree;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import com.github.email4n6.view.messagepane.MessagePaneController;
-import javafx.application.Platform;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.concurrent.Task;
 import javafx.scene.control.TreeItem;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Controls the tree tab.
