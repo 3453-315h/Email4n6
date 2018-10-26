@@ -19,7 +19,10 @@
 package com.github.email4n6.utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -60,6 +63,21 @@ public class PathUtils {
     public static String getCasePath(String caseName) {
         return getCasesPath() + File.separator + caseName;
     }
+    
+    /**
+     * @return A list of case names.
+     */
+    public static long getNumberOfCases() {
+        long numCases = 0;
+
+        try {
+            numCases = Files.list(Paths.get(PathUtils.getCasesPath())).count();
+        } catch (IOException ex) {
+            log.error(ex.getMessage(), ex);
+        }
+        return numCases;
+    }
+    
 
     /**
      * @return The path to the file where all case settings are stored.

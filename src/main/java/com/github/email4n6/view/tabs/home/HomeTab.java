@@ -26,6 +26,7 @@ import java.util.Set;
 
 import com.github.email4n6.model.Case;
 import com.github.email4n6.model.Version;
+import com.github.email4n6.utils.PathUtils;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -97,7 +98,7 @@ public class HomeTab {
     private TableView<Case> createCaseTable() {
         TableView<Case> table = new TableView<>();
         
-        TableColumn<Case, String> columnId = new TableColumn<>("NÂ°");
+        TableColumn<Case, String> columnId = new TableColumn<>("N°");
         TableColumn<Case, String> columnName = new TableColumn<>("Name");
         TableColumn<Case, String> columnDescription = new TableColumn<>("Description");
         TableColumn<Case, String> columnInvestigator = new TableColumn<>("Investigator");
@@ -351,7 +352,7 @@ public class HomeTab {
                     displayError("Please specify a valid source.");
                 } else {
                     createdCase = Case.builder()
-                    		.id(getTable().getItems().size()+1) // TODO set an incremental value
+                    		.id((int) (PathUtils.getNumberOfCases()+1)) // TODO set an incremental value
                             .name(fieldName.getText())
                             .investigator(fieldInvestigator.getText())
                             .description(fieldDescription.getText())
