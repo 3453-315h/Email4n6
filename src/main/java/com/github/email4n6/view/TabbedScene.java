@@ -112,6 +112,7 @@ public class TabbedScene {
         });
 
         tabPane.getTabs().add(homeTab.getTab());
+        tabPane.getTabs().add(homeTab.getTabAbout());
 
         sceneLayout.setCenter(tabPane);
     }
