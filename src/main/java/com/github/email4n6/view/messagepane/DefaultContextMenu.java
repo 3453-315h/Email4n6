@@ -80,7 +80,7 @@ class DefaultContextMenu extends ContextMenu {
         bookmarksAddSelected.setOnAction((event) -> {
             ObservableList<MessageRow> selectedItems = messagePane.getTable().getSelectionModel().getSelectedItems();
 
-            new Thread(new Task() {
+            new Thread(new Task<Object>() {
                 @Override
                 protected Object call() {
                     messagePane.setLoading(true);

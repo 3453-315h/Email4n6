@@ -119,7 +119,7 @@ public class HomeTab {
     private TableView<Case> createCaseTable() {
         TableView<Case> table = new TableView<>();
         
-        TableColumn<Case, String> columnId = new TableColumn<>("N°");
+        TableColumn<Case, String> columnId = new TableColumn<>("Num");
         TableColumn<Case, String> columnName = new TableColumn<>("Name");
         TableColumn<Case, String> columnDescription = new TableColumn<>("Description");
         TableColumn<Case, String> columnInvestigator = new TableColumn<>("Investigator");

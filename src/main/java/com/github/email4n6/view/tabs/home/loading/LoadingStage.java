@@ -110,9 +110,9 @@ public class LoadingStage {
     /**
      * Starts the task and adds it to the loading view.
      */
-    public void addTask(Task<TreeItem<TreeObject>> task) {
+    public void addTask(Task task) {
         progressView.getTasks().add(task);
-        task.setOnSucceeded((event) -> createdTreeItems.add(task.getValue()));
+        task.setOnSucceeded((event) -> createdTreeItems.add((TreeItem<TreeObject>) task.getValue()));
 
         executorService.submit(task);
     }

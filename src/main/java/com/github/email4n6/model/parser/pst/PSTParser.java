@@ -76,7 +76,7 @@ public class PSTParser implements Parser {
     public TreeItem<TreeObject> parseFile(File file, ParserConfiguration configuration, int totalFiles) {
         isParsed = Boolean.parseBoolean(Settings.get(configuration.getCurrentCase().getName(), getName() + "-IsParsed"));
 
-        Task task = new Task() {
+        Task task = new Task<Object>() {
             private AtomicInteger messageAmount = new AtomicInteger(0);
             private AtomicInteger finishedAmount = new AtomicInteger(0);
 
