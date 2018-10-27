@@ -24,10 +24,10 @@ import com.github.email4n6.view.tabs.bookmarks.BookmarksController;
 import com.github.email4n6.view.tabs.bookmarks.BookmarksModel;
 import com.github.email4n6.view.tabs.bookmarks.BookmarksTab;
 import com.github.email4n6.view.tabs.bookmarks.TagModel;
-import com.github.email4n6.view.tabs.home.loading.LoadingStage;
 import com.github.email4n6.view.tabs.home.HomeController;
 import com.github.email4n6.view.tabs.home.HomeModel;
 import com.github.email4n6.view.tabs.home.HomeTab;
+import com.github.email4n6.view.tabs.home.loading.LoadingStage;
 import com.github.email4n6.view.tabs.report.ReportController;
 import com.github.email4n6.view.tabs.report.ReportModel;
 import com.github.email4n6.view.tabs.report.ReportTab;
@@ -37,6 +37,7 @@ import com.github.email4n6.view.tabs.search.SearchTab;
 import com.github.email4n6.view.tabs.tree.TreeController;
 import com.github.email4n6.view.tabs.tree.TreeModel;
 import com.github.email4n6.view.tabs.tree.TreeTab;
+
 import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.TabPane;
@@ -55,8 +56,7 @@ public class TabbedScene {
     private @Getter Scene scene;
 
     public TabbedScene() {
-        BorderPane sceneLayout = new BorderPane();
-        scene = new Scene(sceneLayout, 900, 600);
+
         TabPane tabPane = new TabPane();
 
         // Add the home tabs, other tabs will be added once a case is opened.
@@ -111,7 +111,11 @@ public class TabbedScene {
         });
 
         tabPane.getTabs().add(homeTab.getTab());
-
-        sceneLayout.setCenter(tabPane);
+        tabPane.getTabs().add(homeTab.getTabAbout());
+        
+        BorderPane root = new BorderPane();
+        root.setCenter(tabPane);
+        scene = new Scene(root, 900, 600);
+        
     }
 }

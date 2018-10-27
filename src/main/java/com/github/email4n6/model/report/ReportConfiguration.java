@@ -17,14 +17,15 @@
  */
 package com.github.email4n6.model.report;
 
+import java.io.File;
+
 import com.github.email4n6.model.Case;
 import com.github.email4n6.model.message.factory.MessageFactory;
 import com.github.email4n6.view.tabs.bookmarks.BookmarksModel;
 import com.github.email4n6.view.tabs.bookmarks.TagModel;
+
 import lombok.Builder;
 import lombok.Getter;
-
-import java.io.File;
 
 /**
  * Configuration options used when creating a report.

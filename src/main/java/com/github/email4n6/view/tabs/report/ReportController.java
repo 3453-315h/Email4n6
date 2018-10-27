@@ -17,12 +17,13 @@
  */
 package com.github.email4n6.view.tabs.report;
 
+import java.io.File;
+
 import com.github.email4n6.model.report.Report;
 import com.github.email4n6.model.report.ReportConfiguration;
+
 import javafx.event.Event;
 import javafx.event.EventHandler;
-
-import java.io.File;
 
 /**
  * Controls the report tab.

@@ -18,12 +18,20 @@
 
 package com.github.email4n6.view.tabs.search;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import org.apache.lucene.document.Document;
+
 import com.github.email4n6.model.Case;
 import com.github.email4n6.model.Settings;
 import com.github.email4n6.model.Version;
 import com.github.email4n6.model.message.MessageRow;
 import com.github.email4n6.model.message.factory.MessageFactory;
 import com.github.email4n6.view.messagepane.MessagePaneController;
+
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -31,12 +39,6 @@ import javafx.event.EventHandler;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.lucene.document.Document;
-
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This class handles updating the MessagePane with the search results.

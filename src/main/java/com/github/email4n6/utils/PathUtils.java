@@ -18,10 +18,13 @@
 
 package com.github.email4n6.utils;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Static class for paths related to this application.
@@ -38,7 +41,7 @@ public class PathUtils {
     /**
      * @return The path to where Email4n6 lives (in the running JAR's directory).
      */
-    private static String getApplicationPath() {
+    public static String getApplicationPath() {
         try {
             return new File(PathUtils.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent();
         } catch (URISyntaxException ex) {
@@ -60,6 +63,21 @@ public class PathUtils {
     public static String getCasePath(String caseName) {
         return getCasesPath() + File.separator + caseName;
     }
+    
+    /**
+     * @return A list of case names.
+     */
+    public static long getNumberOfCases() {
+        long numCases = 0;
+
+        try {
+            numCases = Files.list(Paths.get(PathUtils.getCasesPath())).count();
+        } catch (IOException ex) {
+            log.error(ex.getMessage(), ex);
+        }
+        return numCases;
+    }
+    
 
     /**
      * @return The path to the file where all case settings are stored.

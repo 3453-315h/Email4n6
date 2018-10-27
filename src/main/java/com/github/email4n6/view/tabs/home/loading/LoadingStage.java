@@ -18,9 +18,15 @@
 
 package com.github.email4n6.view.tabs.home.loading;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import com.github.email4n6.model.Version;
 import com.github.email4n6.view.tabs.home.loading.taskprogress.TaskProgressView;
 import com.github.email4n6.view.tabs.tree.TreeObject;
+
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
@@ -32,11 +38,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Stage that gets shown when opening a case, used by parsers to show progress.
@@ -109,9 +110,9 @@ public class LoadingStage {
     /**
      * Starts the task and adds it to the loading view.
      */
-    public void addTask(Task<TreeItem<TreeObject>> task) {
+    public void addTask(Task task) {
         progressView.getTasks().add(task);
-        task.setOnSucceeded((event) -> createdTreeItems.add(task.getValue()));
+        task.setOnSucceeded((event) -> createdTreeItems.add((TreeItem<TreeObject>) task.getValue()));
 
         executorService.submit(task);
     }

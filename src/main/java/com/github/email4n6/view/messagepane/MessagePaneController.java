@@ -17,12 +17,25 @@
  */
 package com.github.email4n6.view.messagepane;
 
+import java.awt.Desktop;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.Optional;
+
+import javax.swing.SwingUtilities;
+
 import com.github.email4n6.model.Version;
-import com.github.email4n6.model.message.factory.MessageFactory;
-import com.github.email4n6.utils.PathUtils;
 import com.github.email4n6.model.message.AttachmentRow;
 import com.github.email4n6.model.message.MessageRow;
 import com.github.email4n6.model.message.MessageValue;
+import com.github.email4n6.model.message.factory.MessageFactory;
+import com.github.email4n6.utils.PathUtils;
+
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -33,16 +46,14 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebView;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.swing.*;
-import java.awt.*;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.util.Optional;
 
 /**
  * This class controls the message pane.

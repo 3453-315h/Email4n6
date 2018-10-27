@@ -17,22 +17,33 @@
  */
 package com.github.email4n6.model.parser.pst;
 
-import com.github.email4n6.model.Settings;
-import com.github.email4n6.model.parser.ParserConfiguration;
-import com.pff.*;
-import lombok.extern.slf4j.Slf4j;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.swing.text.BadLocationException;
+import javax.swing.text.rtf.RTFEditorKit;
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 
-import javax.swing.text.BadLocationException;
-import javax.swing.text.rtf.RTFEditorKit;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
+import com.github.email4n6.model.Settings;
+import com.github.email4n6.model.parser.ParserConfiguration;
+import com.pff.PSTActivity;
+import com.pff.PSTAppointment;
+import com.pff.PSTAttachment;
+import com.pff.PSTContact;
+import com.pff.PSTException;
+import com.pff.PSTMessage;
+import com.pff.PSTObject;
+import com.pff.PSTRecipient;
+import com.pff.PSTRss;
+import com.pff.PSTTask;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Indexes PST messages.

@@ -17,24 +17,48 @@
  */
 package com.github.email4n6.view.tabs.home;
 
-import com.github.email4n6.model.Version;
+import java.io.File;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 import com.github.email4n6.model.Case;
+import com.github.email4n6.model.Version;
+import com.github.email4n6.utils.PathUtils;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
-import javafx.stage.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.Window;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.io.File;
-import java.util.*;
 
 /**
  * "Dumb" class, only handles what the user sees and fires events.
@@ -44,6 +68,7 @@ import java.util.*;
 public class HomeTab {
 
     private @Getter Tab tab;
+    private @Getter Tab tabAbout;
     private @Getter TableView<Case> table;
 
     private @Setter EventHandler<ActionEvent> onCreateCase;
@@ -66,6 +91,26 @@ public class HomeTab {
         tab.setGraphic(new ImageView(new Image(this.getClass().getResourceAsStream("/images/home.png"))));
         tab.setClosable(false);
         tab.setContent(tabLayout);
+        
+        tabAbout = new Tab();
+        tabAbout.setText("About");
+        tabAbout.setClosable(false);
+        BorderPane tabAboutLayout = new BorderPane();
+        tabAboutLayout.setPadding(new Insets(5, 5, 0, 0));
+        tabAboutLayout.setCenter(new Label("Authors:\n"+
+        		"Marten4n6 and Contributors\n\n" +
+        		"Credits:\n" + 
+        		"This project would not be possible without the following awesome open-source projects:\n" + 
+        		"\n" + 
+        		"java-libpst, huge thanks to Richard Johnson\n" + 
+        		"Indexing and searching via Apache Lucene\n" + 
+        		"HTML report templates are rendered via FreeMarker\n" + 
+        		"Icons created by IconMonstr\n" + 
+        		"Logo created by motusora\n\n" + 
+        		"License:\n" + 
+        		"GPLv3"));
+        tabAboutLayout.setLeft(new ImageView(new Image(this.getClass().getResourceAsStream("/images/logo-home.png"))));
+        tabAbout.setContent(tabAboutLayout);
     }
 
     /**
@@ -73,12 +118,16 @@ public class HomeTab {
      */
     private TableView<Case> createCaseTable() {
         TableView<Case> table = new TableView<>();
-
+        
+        TableColumn<Case, String> columnId = new TableColumn<>("Num");
         TableColumn<Case, String> columnName = new TableColumn<>("Name");
         TableColumn<Case, String> columnDescription = new TableColumn<>("Description");
         TableColumn<Case, String> columnInvestigator = new TableColumn<>("Investigator");
         TableColumn<Case, String> columnSize = new TableColumn<>("Size");
 
+        columnId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        columnId.setMinWidth(50);
+        columnId.setMaxWidth(100);
         columnName.setCellValueFactory(new PropertyValueFactory<>("name"));
         columnDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
         columnInvestigator.setCellValueFactory(new PropertyValueFactory<>("investigator"));
@@ -87,6 +136,8 @@ public class HomeTab {
         table.setPlaceholder(new Label("No cases have been created."));
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         table.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+
+        table.getColumns().add(columnId);
         table.getColumns().add(columnName);
         table.getColumns().add(columnDescription);
         table.getColumns().add(columnInvestigator);
@@ -256,7 +307,7 @@ public class HomeTab {
 
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.initOwner(ownerWindow);
-            stage.setTitle("Email4n6 v" + Version.VERSION_NUMBER);
+            stage.setTitle("New Case Information");
             stage.setScene(scene);
 
             // Listeners
@@ -276,7 +327,7 @@ public class HomeTab {
                     // Extension filter
                     // TODO - Dynamically update the list of extensions.
                     FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter(
-                            "Supported",
+                            "Supported .PST or .OST files",
                             Arrays.asList("*.pst", "*.ost")
                     );
                     fileChooser.getExtensionFilters().add(filter);
@@ -322,6 +373,7 @@ public class HomeTab {
                     displayError("Please specify a valid source.");
                 } else {
                     createdCase = Case.builder()
+                    		.id((int) (PathUtils.getNumberOfCases()+1)) 
                             .name(fieldName.getText())
                             .investigator(fieldInvestigator.getText())
                             .description(fieldDescription.getText())

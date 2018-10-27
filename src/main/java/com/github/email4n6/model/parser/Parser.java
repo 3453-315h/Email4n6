@@ -18,11 +18,12 @@
 
 package com.github.email4n6.model.parser;
 
-import com.github.email4n6.view.tabs.tree.TreeObject;
-import javafx.scene.control.TreeItem;
-
 import java.io.File;
 import java.util.Set;
+
+import com.github.email4n6.view.tabs.tree.TreeObject;
+
+import javafx.scene.control.TreeItem;
 
 /**
  * Interface for parsing files.

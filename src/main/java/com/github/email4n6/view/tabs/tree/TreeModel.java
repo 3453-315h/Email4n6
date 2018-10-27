@@ -17,18 +17,19 @@
  */
 package com.github.email4n6.view.tabs.tree;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import com.github.email4n6.model.message.MessageRow;
 import com.github.email4n6.model.message.factory.MessageFactory;
 import com.github.email4n6.view.messagepane.MessagePane;
+
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.control.TreeItem;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Model used by the tree controller.

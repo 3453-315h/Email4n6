@@ -21,6 +21,7 @@ package com.github.email4n6.model.parser;
 import com.github.email4n6.model.Case;
 import com.github.email4n6.model.Indexer;
 import com.github.email4n6.view.tabs.home.loading.LoadingStage;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import lombok.Builder;

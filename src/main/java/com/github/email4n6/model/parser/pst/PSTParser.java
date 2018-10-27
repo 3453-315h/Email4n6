@@ -18,21 +18,26 @@
 
 package com.github.email4n6.model.parser.pst;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import com.github.email4n6.model.Settings;
 import com.github.email4n6.model.parser.Parser;
 import com.github.email4n6.model.parser.ParserConfiguration;
 import com.github.email4n6.view.tabs.tree.TreeObject;
-import com.pff.*;
+import com.pff.PSTException;
+import com.pff.PSTFile;
+import com.pff.PSTFolder;
+import com.pff.PSTObject;
+
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.scene.control.CheckBoxTreeItem;
 import javafx.scene.control.TreeItem;
 import lombok.extern.slf4j.Slf4j;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Parser implementation which parses PST files.
@@ -71,7 +76,7 @@ public class PSTParser implements Parser {
     public TreeItem<TreeObject> parseFile(File file, ParserConfiguration configuration, int totalFiles) {
         isParsed = Boolean.parseBoolean(Settings.get(configuration.getCurrentCase().getName(), getName() + "-IsParsed"));
 
-        Task task = new Task() {
+        Task task = new Task<Object>() {
             private AtomicInteger messageAmount = new AtomicInteger(0);
             private AtomicInteger finishedAmount = new AtomicInteger(0);
 

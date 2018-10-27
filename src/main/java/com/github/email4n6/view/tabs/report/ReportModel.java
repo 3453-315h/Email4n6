@@ -18,16 +18,17 @@
 
 package com.github.email4n6.view.tabs.report;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.github.email4n6.model.Case;
 import com.github.email4n6.model.message.factory.MessageFactory;
 import com.github.email4n6.model.report.HTMLReport;
 import com.github.email4n6.model.report.Report;
 import com.github.email4n6.view.tabs.bookmarks.BookmarksModel;
 import com.github.email4n6.view.tabs.bookmarks.TagModel;
-import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.List;
+import lombok.Getter;
 
 /**
  * Model for the report tab.

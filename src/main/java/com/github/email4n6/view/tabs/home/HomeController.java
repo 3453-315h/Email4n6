@@ -17,8 +17,11 @@
  */
 package com.github.email4n6.view.tabs.home;
 
+import java.util.Optional;
+
 import com.github.email4n6.model.Case;
 import com.github.email4n6.model.parser.FileParser;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -27,8 +30,6 @@ import javafx.stage.Window;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Optional;
 
 /**
  * Handles the interaction between the view and model.

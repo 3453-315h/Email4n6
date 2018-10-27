@@ -18,6 +18,8 @@
 package com.github.email4n6.view;
 
 import com.github.email4n6.model.Version;
+import com.github.email4n6.utils.PathUtils;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -50,9 +52,9 @@ public class StartupStage {
         stage = new Stage();
 
         BorderPane layout = new BorderPane();
-        Scene scene = new Scene(layout, 650, 360);
+        Scene scene = new Scene(layout, 750, 360);
 
-        Label textLabel = new Label("Email4n6 will live in the current directory.\nAre you sure you want to continue?");
+        Label textLabel = new Label("Email4n6 will live in the current directory: \n" + PathUtils.getApplicationPath() +  "\n\nAre you sure you want to continue?");
         Label logoLabel = new Label();
 
         logoLabel.setGraphic(new ImageView(new Image(this.getClass().getResourceAsStream("/images/logo-startup.png"))));

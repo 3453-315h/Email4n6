@@ -17,15 +17,17 @@
  */
 package com.github.email4n6.view.tabs.bookmarks;
 
-import com.zaxxer.hikari.HikariDataSource;
-import lombok.Cleanup;
-import lombok.extern.slf4j.Slf4j;
-import org.h2.jdbc.JdbcSQLException;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import org.h2.jdbc.JdbcSQLException;
+
+import com.zaxxer.hikari.HikariDataSource;
+
+import lombok.Cleanup;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Model for tags.

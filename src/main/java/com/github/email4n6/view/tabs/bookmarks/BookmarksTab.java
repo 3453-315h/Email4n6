@@ -18,6 +18,7 @@
 package com.github.email4n6.view.tabs.bookmarks;
 
 import com.github.email4n6.view.messagepane.MessagePane;
+
 import javafx.scene.control.Tab;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;

@@ -18,14 +18,14 @@
 
 package com.github.email4n6.model.message;
 
+import java.util.Date;
+
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.StringProperty;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
-
-import java.util.Date;
 
 /**
  * Represents a message row.

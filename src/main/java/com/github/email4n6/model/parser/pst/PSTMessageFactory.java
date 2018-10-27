@@ -17,34 +17,47 @@
  */
 package com.github.email4n6.model.parser.pst;
 
-import com.github.email4n6.model.message.AttachmentRow;
-import com.github.email4n6.model.message.MessageRow;
-import com.github.email4n6.model.message.MessageValue;
-import com.github.email4n6.view.tabs.search.SearchModel;
-import com.github.email4n6.model.Settings;
-import com.github.email4n6.model.Case;
-import com.github.email4n6.model.message.factory.MessageFactory;
-import com.github.email4n6.view.tabs.bookmarks.BookmarksModel;
-import com.github.email4n6.view.tabs.bookmarks.TagModel;
-import com.github.email4n6.view.tabs.tree.TreeObject;
-import com.pff.*;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
-import javafx.scene.control.TreeItem;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.TermQuery;
-
-import javax.swing.text.BadLocationException;
-import javax.swing.text.rtf.RTFEditorKit;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.swing.text.BadLocationException;
+import javax.swing.text.rtf.RTFEditorKit;
+
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.TermQuery;
+
+import com.github.email4n6.model.Case;
+import com.github.email4n6.model.Settings;
+import com.github.email4n6.model.message.AttachmentRow;
+import com.github.email4n6.model.message.MessageRow;
+import com.github.email4n6.model.message.MessageValue;
+import com.github.email4n6.model.message.factory.MessageFactory;
+import com.github.email4n6.view.tabs.bookmarks.BookmarksModel;
+import com.github.email4n6.view.tabs.bookmarks.TagModel;
+import com.github.email4n6.view.tabs.search.SearchModel;
+import com.github.email4n6.view.tabs.tree.TreeObject;
+import com.pff.PSTActivity;
+import com.pff.PSTAppointment;
+import com.pff.PSTAttachment;
+import com.pff.PSTContact;
+import com.pff.PSTException;
+import com.pff.PSTFile;
+import com.pff.PSTMessage;
+import com.pff.PSTObject;
+import com.pff.PSTRecipient;
+import com.pff.PSTRss;
+import com.pff.PSTTask;
+
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.scene.control.TreeItem;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Factory for creating messages related to this parser.

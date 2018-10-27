@@ -17,11 +17,11 @@
  */
 package com.github.email4n6.model;
 
+import java.util.Set;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Set;
 
 /**
  * Represents a case.
@@ -31,6 +31,7 @@ import java.util.Set;
 @Builder
 public class Case {
 
+	private @Getter final int id;
     private @Getter String name, description, investigator;
     private @Getter @Setter String size;
     private @Getter Set<String> sources;

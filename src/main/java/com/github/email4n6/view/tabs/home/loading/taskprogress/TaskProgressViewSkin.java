@@ -26,7 +26,10 @@
  */
 package com.github.email4n6.view.tabs.home.loading.taskprogress;
 
+import java.net.URL;
+
 import com.sun.javafx.css.StyleManager;
+
 import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
@@ -41,8 +44,6 @@ import javafx.scene.control.SkinBase;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
-
-import java.net.URL;
 
 public class TaskProgressViewSkin<T extends Task<?>> extends SkinBase<TaskProgressView<T>> {
 

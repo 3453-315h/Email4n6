@@ -18,12 +18,12 @@
 
 package com.github.email4n6.model.parser;
 
-import com.github.email4n6.model.parser.pst.PSTParser;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.github.email4n6.model.parser.pst.PSTParser;
 
 /**
  * Factory for creating parsers.
