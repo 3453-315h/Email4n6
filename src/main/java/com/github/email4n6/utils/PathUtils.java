@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.email4n6.utils;
 
 import java.io.File;
@@ -65,17 +64,15 @@ public class PathUtils {
     }
     
     /**
-     * @return A list of case names.
+     * @return The number of created cases.
      */
-    public static long getNumberOfCases() {
-        long numCases = 0;
-
+    public static int getNumberOfCases() {
         try {
-            numCases = Files.list(Paths.get(PathUtils.getCasesPath())).count();
+            return (int)Files.list(Paths.get(PathUtils.getCasesPath())).count();
         } catch (IOException ex) {
             log.error(ex.getMessage(), ex);
+            return 0;
         }
-        return numCases;
     }
     
 

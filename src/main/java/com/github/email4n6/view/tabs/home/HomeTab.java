@@ -68,7 +68,6 @@ import lombok.Setter;
 public class HomeTab {
 
     private @Getter Tab tab;
-    private @Getter Tab tabAbout;
     private @Getter TableView<Case> table;
 
     private @Setter EventHandler<ActionEvent> onCreateCase;
@@ -91,26 +90,6 @@ public class HomeTab {
         tab.setGraphic(new ImageView(new Image(this.getClass().getResourceAsStream("/images/home.png"))));
         tab.setClosable(false);
         tab.setContent(tabLayout);
-        
-        tabAbout = new Tab();
-        tabAbout.setText("About");
-        tabAbout.setClosable(false);
-        BorderPane tabAboutLayout = new BorderPane();
-        tabAboutLayout.setPadding(new Insets(5, 5, 0, 0));
-        tabAboutLayout.setCenter(new Label("Authors:\n"+
-        		"Marten4n6 and Contributors\n\n" +
-        		"Credits:\n" + 
-        		"This project would not be possible without the following awesome open-source projects:\n" + 
-        		"\n" + 
-        		"java-libpst, huge thanks to Richard Johnson\n" + 
-        		"Indexing and searching via Apache Lucene\n" + 
-        		"HTML report templates are rendered via FreeMarker\n" + 
-        		"Icons created by IconMonstr\n" + 
-        		"Logo created by motusora\n\n" + 
-        		"License:\n" + 
-        		"GPLv3"));
-        tabAboutLayout.setLeft(new ImageView(new Image(this.getClass().getResourceAsStream("/images/logo-home.png"))));
-        tabAbout.setContent(tabAboutLayout);
     }
 
     /**
@@ -119,7 +98,7 @@ public class HomeTab {
     private TableView<Case> createCaseTable() {
         TableView<Case> table = new TableView<>();
         
-        TableColumn<Case, String> columnId = new TableColumn<>("Num");
+        TableColumn<Case, String> columnId = new TableColumn<>("#");
         TableColumn<Case, String> columnName = new TableColumn<>("Name");
         TableColumn<Case, String> columnDescription = new TableColumn<>("Description");
         TableColumn<Case, String> columnInvestigator = new TableColumn<>("Investigator");
@@ -373,7 +352,7 @@ public class HomeTab {
                     displayError("Please specify a valid source.");
                 } else {
                     createdCase = Case.builder()
-                    		.id((int) (PathUtils.getNumberOfCases()+1)) 
+                    		.id(PathUtils.getNumberOfCases() + 1)
                             .name(fieldName.getText())
                             .investigator(fieldInvestigator.getText())
                             .description(fieldDescription.getText())

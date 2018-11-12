@@ -56,7 +56,6 @@ public class TabbedScene {
     private @Getter Scene scene;
 
     public TabbedScene() {
-
         TabPane tabPane = new TabPane();
 
         // Add the home tabs, other tabs will be added once a case is opened.
@@ -111,11 +110,9 @@ public class TabbedScene {
         });
 
         tabPane.getTabs().add(homeTab.getTab());
-        tabPane.getTabs().add(homeTab.getTabAbout());
         
         BorderPane root = new BorderPane();
         root.setCenter(tabPane);
         scene = new Scene(root, 900, 600);
-        
     }
 }

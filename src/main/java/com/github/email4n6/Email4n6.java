@@ -15,7 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package com.github.email4n6;
 
 import java.io.File;
@@ -33,6 +32,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,50 +47,38 @@ public class Email4n6 extends Application {
 	public static void main(String[] args) {
 		log.info("Starting Email4n6 v{}...", Version.VERSION_NUMBER);
 
-		Application.launch(args);
+		launch(args);
 	}
 
 	@Override
-	public void start(Stage primaryStage) {
+	public void start(Stage stage) {
 		confirmLiveInCurrentDirectory();
 		createDirectories();
 
 		// Show the main scene.
-		primaryStage.setTitle("Email4n6 v" + Version.VERSION_NUMBER);
-		primaryStage.setScene(new TabbedScene().getScene());
-		primaryStage.centerOnScreen();
-		primaryStage.show();
-		primaryStage.setOnCloseRequest((event) -> {
-			log.info("Shutting down...");
+		stage.setTitle("Email4n6 v" + Version.VERSION_NUMBER);
+        stage.setScene(new TabbedScene().getScene());
+        stage.centerOnScreen();
+        stage.show();
+        stage.setOnCloseRequest((event) -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Email4n6 v" + Version.VERSION_NUMBER);
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure you want to quit?");
+            alert.initOwner(stage);
+            alert.initModality(Modality.WINDOW_MODAL);
 
-			// TODO - Fire an event to shutdown gracefully (TreeTab executor).
-			// TODO - Shutdown confirmation (with "don't ask again").
+            Optional<ButtonType> result = alert.showAndWait();
 
-			Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-			alert.setTitle("Shutdown confirmation");
-			alert.setHeaderText(null);
-			alert.setContentText("Confirm quit ?");
-			ButtonType yesButton = new ButtonType("Yes", ButtonBar.ButtonData.YES);
-			ButtonType noButton = new ButtonType("No", ButtonBar.ButtonData.NO);
-			alert.getButtonTypes().setAll(yesButton, noButton);
-			Optional<ButtonType> result = alert.showAndWait();
-			
-			if(result.isPresent() ) {
-				if(result.get() == yesButton) {
-					log.info("Shutting down for real...");
-					
-					Platform.exit();
-					System.exit(0);
-				} else if (result.get() == noButton) {
-					log.info("Not Shutting down ...");
-					event.consume();
-				}
-			} else {
-				log.info("Not Shutting down ...");
-				
-				event.consume();
-			}
-			
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                log.info("Shutting down...");
+
+                Platform.exit();
+                System.exit(0);
+            } else {
+                log.info("Shutdown cancelled.");
+                event.consume();
+            }
 		});
 	}
 
