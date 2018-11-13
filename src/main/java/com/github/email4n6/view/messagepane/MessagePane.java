@@ -28,12 +28,15 @@ import com.github.email4n6.model.message.MessageRow;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.binding.StringExpression;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
@@ -55,6 +58,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import lombok.Getter;
@@ -87,7 +93,7 @@ public class MessagePane {
         pane.setMaxWidth(Double.MAX_VALUE);
         pane.setMaxHeight(Double.MAX_VALUE);
 
-        pane.getItems().addAll(createTable(), createTabPane());
+        pane.getItems().addAll(createTable(), new VBox(createTabPane(), createInformationText()));
     }
 
     /**
@@ -192,6 +198,31 @@ public class MessagePane {
                 createAttachmentsTab()
         );
         return tabPane;
+    }
+
+    /**
+     * @return A label which displays basic information about selected messages.
+     */
+    private TextFlow createInformationText() {
+        Text selectedText = new Text();
+
+        SimpleIntegerProperty selectedAmount = new SimpleIntegerProperty();
+        SimpleIntegerProperty maximumAmount = new SimpleIntegerProperty();
+
+        selectedText.textProperty().bind(Bindings.format("Selected: %s/%s", selectedAmount, maximumAmount));
+
+        // Listeners
+        table.getItems().addListener((ListChangeListener.Change<? extends MessageRow> change) -> {
+            maximumAmount.set(table.getItems().size());
+        });
+        table.getSelectionModel().getSelectedItems().addListener((ListChangeListener.Change<? extends MessageRow> change) -> {
+            selectedAmount.set(table.getSelectionModel().getSelectedItems().size());
+        });
+
+        TextFlow informationText = new TextFlow(selectedText);
+        informationText.setPadding(new Insets(5, 5, 0, 5));
+
+        return informationText;
     }
 
     /**
