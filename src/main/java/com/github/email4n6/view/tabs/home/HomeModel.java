@@ -19,16 +19,13 @@ package com.github.email4n6.view.tabs.home;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.github.email4n6.model.Case;
 import com.github.email4n6.model.Settings;
@@ -40,6 +37,7 @@ import com.google.gson.Gson;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -106,8 +104,6 @@ public class HomeModel {
             new File(PathUtils.getCasePath(caseObject.getName())).mkdir();
             new File(PathUtils.getIndexPath(caseObject.getName())).mkdir();
 
-            persistCase(caseObject);
-
             // Set default settings.
             Settings.set(caseObject.getName(), "date_format", "EEE, d MMM yyyy HH:mm:ss");
             Settings.set(caseObject.getName(), "search_limit", "100");
@@ -136,6 +132,19 @@ public class HomeModel {
 
             @Override
             protected Void call() {
+                if (caseObject.getSize().equals("Not calculated yet.")) {
+                    // Update the source size.
+                    loadingStage.setStatus("Calculating the size of the source(s)...");
+                    log.debug("Calculating the size of the source(s)...");
+
+                    String sourceSize = getSourceSize(caseObject.getSources(), caseObject.isSubFolders());
+
+                    caseObject.setSize(sourceSize);
+
+                    loadingStage.setStatus("Waiting for parsers to finish...");
+                    log.debug("Source(s) size: {}", sourceSize);
+                }
+
                 File firstSource = new File(caseObject.getSources().iterator().next());
 
                 fileParser.setOnParsingFinished(onFinishedParsing);
@@ -146,6 +155,7 @@ public class HomeModel {
                     fileParser.parseFiles(caseObject.getSources());
                 }
 
+                persistCase(caseObject);
                 return null;
             }
         }).start();
@@ -228,5 +238,61 @@ public class HomeModel {
             log.error(ex.getMessage(), ex);
             return null;
         }
+    }
+
+    /**
+     * @param sources                 A set containing either a single folder or a list of file paths.
+     * @param extractSubFolders       True if sub-folders should be walked.
+     * @return The size of the source in a human readable format.
+     */
+    private String getSourceSize(Set<String> sources, boolean extractSubFolders) {
+        final AtomicLong sourceSize = new AtomicLong(0);
+
+        if (new File(sources.iterator().next()).isDirectory()) {
+            try {
+                Files.walkFileTree(Paths.get(sources.iterator().next()), new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+                        String fileName = path.toFile().getName().toLowerCase();
+
+                        if (fileName.endsWith(".pst") && fileName.endsWith(".ost")) {
+                            sourceSize.addAndGet(path.toFile().length());
+                        }
+                        return FileVisitResult.CONTINUE;
+                    }
+                    @Override
+                    public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
+                        if (!extractSubFolders && !path.toString().equals(sources.iterator().next())) {
+                            return FileVisitResult.SKIP_SUBTREE;
+                        } else {
+                            return FileVisitResult.CONTINUE;
+                        }
+                    }
+                    @Override
+                    public FileVisitResult visitFileFailed(Path file, IOException ex) {
+                        return FileVisitResult.CONTINUE;
+                    }
+                });
+            } catch (IOException ex) {
+                log.error(ex.getMessage(), ex);
+            }
+        } else {
+            for (String source : sources) {
+                sourceSize.addAndGet(new File(source).length());
+            }
+        }
+        return humanReadableByteCount(sourceSize.get());
+    }
+
+    /**
+     * @return A human readable byte size.
+     */
+    private String humanReadableByteCount(long bytes) {
+        boolean si = true;
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 }

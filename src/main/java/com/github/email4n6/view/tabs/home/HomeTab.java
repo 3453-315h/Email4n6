@@ -356,6 +356,7 @@ public class HomeTab {
                             .name(fieldName.getText())
                             .investigator(fieldInvestigator.getText())
                             .description(fieldDescription.getText())
+                            .size("Not calculated yet.")
                             .sources(sources).build();
 
                     onCreateCase.handle(event);
