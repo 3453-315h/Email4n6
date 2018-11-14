@@ -30,12 +30,16 @@ import com.github.email4n6.model.message.factory.MessageFactory;
 
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.DirectoryChooser;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -44,19 +48,23 @@ import lombok.extern.slf4j.Slf4j;
  * @author Marten4n6
  */
 @Slf4j
-class DefaultContextMenu extends ContextMenu {
+public class DefaultContextMenu extends ContextMenu {
+
+    private @Setter ShowInTreeEvent onShowInTree;
 
     /**
      * Initializes the default context menu.
      */
-    DefaultContextMenu(MessagePane messagePane, MessageFactory messageFactory) {
+    public DefaultContextMenu(MessagePane messagePane, MessageFactory messageFactory) {
         Menu menuBookmark = new Menu("Bookmark");
         Menu menuTag = new Menu("Tag");
         Menu menuExport = new Menu("Export");
+        Menu menuShowIn = new Menu("Show In");
 
         menuBookmark.setGraphic(new ImageView(new Image(this.getClass().getResourceAsStream("/images/star.png"))));
         menuTag.setGraphic(new ImageView(new Image(this.getClass().getResourceAsStream("/images/tag.png"))));
         menuExport.setGraphic(new ImageView(new Image(this.getClass().getResourceAsStream("/images/export.png"))));
+        menuShowIn.setGraphic(new ImageView(new Image(this.getClass().getResourceAsStream("/images/eye.png"))));
 
         // Bookmark
         MenuItem bookmarksAddSelected = new MenuItem("Add selected");
@@ -69,12 +77,16 @@ class DefaultContextMenu extends ContextMenu {
         // Export
         MenuItem exportAttachments = new MenuItem("Attachments");
 
+        // Show In
+        MenuItem showInTree = new MenuItem("Tree");
+
         // Add
         menuBookmark.getItems().addAll(bookmarksAddSelected, bookmarksRemoveSelected);
         menuTag.getItems().addAll(tagAddSelected, tagRemoveSelected);
         menuExport.getItems().addAll(exportAttachments);
+        menuShowIn.getItems().addAll(showInTree);
 
-        getItems().addAll(menuBookmark, menuTag, menuExport);
+        getItems().addAll(menuBookmark, menuTag, menuExport, menuShowIn);
 
         // Listeners
         bookmarksAddSelected.setOnAction((event) -> {
@@ -163,5 +175,15 @@ class DefaultContextMenu extends ContextMenu {
                 }
             }
         });
+        showInTree.setOnAction((event) -> {
+            MessageRow selectedRow = messagePane.getTable().getSelectionModel().getSelectedItem();
+
+            onShowInTree.show(selectedRow.getFolderID(), selectedRow.getId());
+        });
+    }
+
+    public interface ShowInTreeEvent {
+
+        void show(String folderID, String messageID);
     }
 }

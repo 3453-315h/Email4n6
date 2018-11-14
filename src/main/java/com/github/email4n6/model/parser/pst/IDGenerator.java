@@ -41,18 +41,19 @@ final class IDGenerator {
     }
 
     /**
-     * A message ID is split up (with a "-") into two parts: <br/>
+     * A message ID is split up (with a "-") into three parts: <br/>
      * <ul>
      * <li>The descriptor node ID of the message.</li>
      * <li>The ID of the PSTFile this message belongs to.</li>
+     * <li>The ID of the folder this message belongs to.</li>
      * </ul>
      *
      * @param message The message to generate the ID for.
      * @param pstFileID The ID of the PSTFile this message belongs to.
      * @return The ID of the message.
      */
-    static String getID(PSTObject message, String pstFileID) {
-        return message.getDescriptorNodeId() + "-" + pstFileID;
+    static String getID(PSTObject message, String pstFileID, String folderID) {
+        return message.getDescriptorNodeId() + "-" + pstFileID + "-" + folderID;
     }
 
     /**

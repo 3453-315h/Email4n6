@@ -17,13 +17,12 @@
  */
 package com.github.email4n6.model.message.factory;
 
-import java.util.List;
-
 import com.github.email4n6.model.message.MessageRow;
 import com.github.email4n6.model.message.MessageValue;
 import com.github.email4n6.view.tabs.tree.TreeObject;
-
 import javafx.scene.control.TreeItem;
+
+import java.util.List;
 
 /**
  * Factory which creates messages, implemented by parsers.
@@ -33,14 +32,14 @@ import javafx.scene.control.TreeItem;
 public interface MessageFactory {
 
     /**
-     * @param id          The message ID.
+     * @param id The message ID.
      * @return A row that can be added to the message table.
      * @see MessageRow
      */
     MessageRow getMessageRow(String id);
 
     /**
-     * @param id          The message ID.
+     * @param id The message ID.
      * @return A message value row (body, headers, attachments etc.) otherwise null.
      * @see MessageValue
      */

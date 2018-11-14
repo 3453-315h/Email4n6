@@ -34,7 +34,7 @@ import lombok.ToString;
 @ToString
 public class MessageRow {
 
-    private @Getter String subject, from, to, cc, id;
+    private @Getter String subject, from, to, cc, id, folderID;
     private @Getter long size;
     private @Getter Date receivedDate;
     private @Getter BooleanProperty bookmarked;

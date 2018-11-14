@@ -53,6 +53,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebView;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -65,10 +66,12 @@ public class MessagePaneController {
 
     private MessagePane messagePane;
     private MessageFactory messageFactory;
+    private @Getter DefaultContextMenu defaultContextMenu;
 
     public MessagePaneController(MessagePane messagePane, MessageFactory messageFactory) {
         this.messagePane = messagePane;
         this.messageFactory = messageFactory;
+        this.defaultContextMenu = new DefaultContextMenu(messagePane, messageFactory);
 
         // Catch events fired by the message pane.
         messagePane.setOnMessageSelectionChange(new MessageSelectionChangeListener());
@@ -77,7 +80,7 @@ public class MessagePaneController {
         messagePane.getBodyView().setOnMouseClicked(new BodyClickListener(messagePane.getBodyView()));
         messagePane.getHeadersView().getEngine().getLoadWorker().stateProperty().addListener(new BodyEngineListener(messagePane.getHeadersView()));
         messagePane.getHeadersView().setOnMouseClicked(new BodyClickListener(messagePane.getHeadersView()));
-        messagePane.getTable().setContextMenu(new DefaultContextMenu(messagePane, messageFactory));
+        messagePane.getTable().setContextMenu(defaultContextMenu);
     }
 
     /**

@@ -20,6 +20,11 @@ package com.github.email4n6.view.tabs.tree;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.github.email4n6.model.message.MessageRow;
 import com.github.email4n6.model.message.factory.MessageFactory;
@@ -29,6 +34,7 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.control.TreeItem;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -41,6 +47,7 @@ public class TreeModel {
 
     private @Getter MessageFactory messageFactory;
     private @Getter List<TreeItem<TreeObject>> createdTreeItems;
+    private @Setter CountDownLatch messagesAddedLatch; // Set before using since it can't be reused.
 
     public TreeModel(MessageFactory messageFactory, List<TreeItem<TreeObject>> createdTreeItems) {
         this.messageFactory = messageFactory;
@@ -75,8 +82,15 @@ public class TreeModel {
                             if (folderMessages == null) {
                                 // May return null if the tree item has no messages.
                             } else {
-                                messagePane.getTable().getItems().addAll(folderMessages);
-                                log.debug("Added {} messages to the message pane.", folderMessages.size());
+                                try {
+                                    messagePane.getTable().getItems().addAll(folderMessages);
+                                    log.debug("Added {} messages to the message pane.", folderMessages.size());
+                                } finally {
+                                    if (messagesAddedLatch != null) {
+                                        log.debug("Releasing lock...");
+                                        messagesAddedLatch.countDown();
+                                    }
+                                }
                             }
                         }
                     }

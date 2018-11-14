@@ -37,11 +37,9 @@ public class BookmarksController {
         this.bookmarksTab = bookmarksTab;
         this.bookmarksModel = bookmarksModel;
 
-        new MessagePaneController(bookmarksTab.getMessagePane(), messageFactory);
-
         // Add existing bookmarks.
-        bookmarksModel.getBookmarks().forEach(bookmark -> {
-            MessageRow row = messageFactory.getMessageRow(bookmark);
+        bookmarksModel.getBookmarks().forEach(bookmarkID -> {
+            MessageRow row = messageFactory.getMessageRow(bookmarkID);
 
             bookmarksTab.getMessagePane().getTable().getItems().add(row);
         });

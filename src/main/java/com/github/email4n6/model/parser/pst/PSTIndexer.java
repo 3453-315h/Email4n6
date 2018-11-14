@@ -98,7 +98,7 @@ class PSTIndexer {
         StringBuilder searchableText = new StringBuilder();
 
         // Fields which uniquely identify this item.
-        addStringField(document, "id", IDGenerator.getID(appointment, pstFileID));
+        addStringField(document, "id", IDGenerator.getID(appointment, pstFileID, folderID));
         addStringField(document, "folder_id", folderID);
 
         // Common
@@ -135,7 +135,7 @@ class PSTIndexer {
         StringBuilder searchableText = new StringBuilder();
 
         // Fields which uniquely identify this item.
-        addStringField(document, "id", IDGenerator.getID(contact, pstFileID));
+        addStringField(document, "id", IDGenerator.getID(contact, pstFileID, folderID));
         addStringField(document, "folder_id", folderID);
 
         // Common
@@ -162,7 +162,7 @@ class PSTIndexer {
         StringBuilder searchableText = new StringBuilder();
 
         // Fields which uniquely identify this item.
-        addStringField(document, "id", IDGenerator.getID(rss, pstFileID));
+        addStringField(document, "id", IDGenerator.getID(rss, pstFileID, folderID));
         addStringField(document, "folder_id", folderID);
 
         // Common
@@ -184,7 +184,7 @@ class PSTIndexer {
         StringBuilder searchableText = new StringBuilder();
 
         // Fields which uniquely identify this item.
-        addStringField(document, "id", IDGenerator.getID(task, pstFileID));
+        addStringField(document, "id", IDGenerator.getID(task, pstFileID, folderID));
         addStringField(document, "folder_id", folderID);
 
         // Common
@@ -209,7 +209,7 @@ class PSTIndexer {
         StringBuilder searchableText = new StringBuilder();
 
         // Fields which uniquely identify this item.
-        addStringField(document, "id", IDGenerator.getID(message, pstFileID));
+        addStringField(document, "id", IDGenerator.getID(message, pstFileID, folderID));
         addStringField(document, "folder_id", folderID);
 
         // Message related

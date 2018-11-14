@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import lombok.Getter;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -52,14 +53,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SearchModel {
 
+    private @Getter String caseName;
+
     private IndexSearcher searcher;
     private QueryParser parser;
 
     public SearchModel(String caseName) {
         try {
-            searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(
-                       new File(PathUtils.getIndexPath(caseName)).toPath())));
-            parser = new QueryParser("searchable_text", new StandardAnalyzer());
+            this.caseName = caseName;
+            this.searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(
+                            new File(PathUtils.getIndexPath(caseName)).toPath())));
+            this.parser = new QueryParser("searchable_text", new StandardAnalyzer());
         } catch (IOException ex) {
             log.error(ex.getMessage(), ex);
         }

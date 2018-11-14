@@ -106,27 +106,29 @@ public class PSTMessageFactory implements MessageFactory {
     @Override
     public MessageRow getMessageRow(String id) {
         try {
-            // If the ID belongs to this parser it will have the
-            // descriptor index as the first part and the PSTFile ID
-            // as the second part of the ID.
+            // A message ID is split up (with a "-") into three parts:
+            // - The descriptor node ID of the message
+            // - The ID of the PSTFile this message belongs to
+            // - The ID of the folder this message belongs to
+            // (if the ID belongs to this parser)
+            String messageID = id.split("-")[0];
             String pstFileID = id.split("-")[1];
+            String folderID = id.split("-")[2];
+
             PSTFile pstFile = fileFromID.get(pstFileID);
             PSTObject pstObject = PSTObject.detectAndLoadPSTObject(pstFile, Long.parseLong(id.split("-")[0]));
 
             MessageRow.MessageRowBuilder messageRowBuilder = MessageRow.builder();
-            String messageID = null;
 
             if (pstObject instanceof PSTContact) {
                 // Contact
                 PSTContact contact = (PSTContact) pstObject;
-                messageID = IDGenerator.getID(contact, pstFileID);
 
                 messageRowBuilder.subject(contact.getSubject());
                 messageRowBuilder.size(contact.getMessageSize());
             } else if (pstObject instanceof PSTAppointment) {
                 // Appointment
                 PSTAppointment appointment = (PSTAppointment) pstObject;
-                messageID = IDGenerator.getID(appointment, pstFileID);
 
                 messageRowBuilder.subject(appointment.getSubject());
                 messageRowBuilder.receivedDate(appointment.getMessageDeliveryTime());
@@ -140,7 +142,6 @@ public class PSTMessageFactory implements MessageFactory {
             } else if (pstObject instanceof PSTMessage) {
                 // Message
                 PSTMessage message = (PSTMessage) pstObject;
-                messageID = IDGenerator.getID(message, pstFileID);
                 StringBuilder to = new StringBuilder();
 
                 // Build a list of recipient emails.
@@ -172,7 +173,8 @@ public class PSTMessageFactory implements MessageFactory {
             SimpleBooleanProperty bookmarkedProperty = new SimpleBooleanProperty(bookmarksModel.isBookmark(messageID));
             SimpleStringProperty tagProperty = new SimpleStringProperty(tagModel.getTag(messageID));
 
-            messageRowBuilder.id(messageID);
+            messageRowBuilder.id(id);
+            messageRowBuilder.folderID(folderID);
             messageRowBuilder.bookmarked(bookmarkedProperty);
             messageRowBuilder.tag(tagProperty);
 

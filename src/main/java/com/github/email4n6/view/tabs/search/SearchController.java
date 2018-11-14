@@ -50,17 +50,13 @@ public class SearchController {
     private SearchTab searchTab;
     private SearchModel searchModel;
     private MessageFactory messageFactory;
-    private Case currentCase;
 
     private Task<List<MessageRow>> worker;
 
-    public SearchController(SearchTab searchTab, SearchModel searchModel, MessageFactory messageFactory, Case currentCase) {
+    public SearchController(SearchTab searchTab, SearchModel searchModel, MessageFactory messageFactory) {
         this.searchTab = searchTab;
         this.searchModel = searchModel;
         this.messageFactory = messageFactory;
-        this.currentCase = currentCase;
-
-        new MessagePaneController(searchTab.getMessagePane(), messageFactory);
 
         // Catch events fired by the search tab.
         searchTab.setOnSearch(new SearchListener());
@@ -93,7 +89,7 @@ public class SearchController {
                 protected List<MessageRow> call() {
                     log.info("Searching for: {}...", searchTab.getSearchQuery());
 
-                    int searchLimit = Integer.parseInt(Settings.get(currentCase.getName(), "search_limit"));
+                    int searchLimit = Integer.parseInt(Settings.get(searchModel.getCaseName(), "search_limit"));
                     if (searchLimit == 0) {
                         log.warn("Showing search results without a limit!");
                         searchLimit = Integer.MAX_VALUE;
@@ -138,7 +134,7 @@ public class SearchController {
 
         @Override
         public void handle(MouseEvent event) {
-            String searchLimit = Settings.get(currentCase.getName(), "search_limit");
+            String searchLimit = Settings.get(searchModel.getCaseName(), "search_limit");
 
             TextInputDialog dialog = new TextInputDialog(searchLimit);
             dialog.setTitle("Email4n6 v" + Version.VERSION_NUMBER);
@@ -149,7 +145,7 @@ public class SearchController {
             if (result.isPresent()) {
                 log.debug("Changing search limit to: {}", result.get());
 
-                Settings.set(currentCase.getName(), "search_limit", result.get());
+                Settings.set(searchModel.getCaseName(), "search_limit", result.get());
                 searchTab.reload();
             }
         }
