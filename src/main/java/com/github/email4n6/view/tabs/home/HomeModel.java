@@ -138,9 +138,8 @@ public class HomeModel {
                     log.debug("Calculating the size of the source(s)...");
 
                     String sourceSize = getSourceSize(caseObject.getSources(), caseObject.isSubFolders());
-                    persistCase(caseObject);
-
                     caseObject.setSize(sourceSize);
+                    persistCase(caseObject);
 
                     loadingStage.setStatus("Waiting for parsers to finish...");
                     log.debug("Source(s) size: {}", sourceSize);
