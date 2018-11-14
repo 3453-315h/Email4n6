@@ -138,6 +138,7 @@ public class HomeModel {
                     log.debug("Calculating the size of the source(s)...");
 
                     String sourceSize = getSourceSize(caseObject.getSources(), caseObject.isSubFolders());
+                    persistCase(caseObject);
 
                     caseObject.setSize(sourceSize);
 
@@ -155,7 +156,6 @@ public class HomeModel {
                     fileParser.parseFiles(caseObject.getSources());
                 }
 
-                persistCase(caseObject);
                 return null;
             }
         }).start();
