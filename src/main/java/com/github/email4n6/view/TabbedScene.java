@@ -32,6 +32,8 @@ import com.github.email4n6.view.tabs.home.HomeController;
 import com.github.email4n6.view.tabs.home.HomeModel;
 import com.github.email4n6.view.tabs.home.HomeTab;
 import com.github.email4n6.view.tabs.home.loading.LoadingStage;
+import com.github.email4n6.view.tabs.report.ReportController;
+import com.github.email4n6.view.tabs.report.ReportModel;
 import com.github.email4n6.view.tabs.report.ReportTab;
 import com.github.email4n6.view.tabs.search.SearchController;
 import com.github.email4n6.view.tabs.search.SearchModel;
@@ -90,7 +92,9 @@ public class TabbedScene {
                 SearchModel searchModel = new SearchModel(currentCase.getName());
 
                 MessageFactory messageFactory = new DefaultMessageFactory(currentCase, bookmarksModel, tagModel, searchModel);
+
                 TreeModel treeModel = new TreeModel(messageFactory, loadingStage.getCreatedTreeItems());
+                ReportModel reportModel = new ReportModel(bookmarksModel, tagModel, messageFactory, currentCase);
 
                 // View
                 TreeTab treeTab = new TreeTab();
@@ -102,6 +106,7 @@ public class TabbedScene {
                 new TreeController(treeTab, treeModel);
                 new SearchController(searchTab, searchModel, messageFactory);
                 new BookmarksController(bookmarksTab, bookmarksModel, messageFactory);
+                new ReportController(reportTab, reportModel);
 
                 MessagePaneController treeMessagePaneController = new MessagePaneController(treeTab.getMessagePane(), messageFactory);
                 MessagePaneController searchMessagePaneController = new MessagePaneController(searchTab.getMessagePane(), messageFactory);
