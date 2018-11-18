@@ -57,6 +57,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -308,13 +309,18 @@ public class MessagePane {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem openItem = new MenuItem("Open");
 
+        openItem.setGraphic(new ImageView(new Image(this.getClass().getResourceAsStream("/images/open.png"))));
         contextMenu.getItems().add(openItem);
 
-        attachmentsTable.setOnMouseClicked((event) -> {
+        attachmentsTable.setOnMouseClicked((MouseEvent event) -> {
             if (event.getButton() == MouseButton.SECONDARY) {
                 contextMenu.show(attachmentsTable, event.getScreenX(), event.getScreenY());
             } else {
-                contextMenu.hide();
+                if (event.getClickCount() == 2) {
+                    openItem.fire();
+                } else {
+                    contextMenu.hide();
+                }
             }
         });
         openItem.setOnAction((event) -> {
