@@ -46,7 +46,7 @@ Currently only PST and OST (untested) files are supported.
 ## How To Use
 
 Email4n6 requires [Java 8](https://java.com/en/download/) to be installed. <br/>
-[Click here to **download**](https://github.com/Marten4n6/Email4n6/releases) the latest stable version of Email4n6.
+[Click here to **download**](https://github.com/Marten4n6/Email4n6/releases/latest) the latest stable version of Email4n6.
 
 ### From Source
 
